@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { AppShell } from "@/components/AppShell";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "MindMap Care",
-  description: "Care navigation and mental-health workflow platform starter."
+  description:
+    "Explainable AI screening and triage platform for African health systems."
 };
 
 export default function RootLayout({
@@ -13,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   );
 }
