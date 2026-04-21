@@ -6,6 +6,36 @@ export type DashboardMetric = {
   detail: string;
 };
 
+export type RiskMixItem = {
+  label: string;
+  value: number;
+  level: "high" | "medium" | "low";
+};
+
+export type DashboardTrendItem = {
+  day: string;
+  screenings: number;
+  highRisk: number;
+  mediumRisk: number;
+  lowRisk: number;
+  followUpPending: number;
+};
+
+export type FacilitySummary = {
+  name: string;
+  programme: string;
+  screenings: number;
+  highRisk: number;
+  followUpPending: number;
+  dataCompleteness: string;
+};
+
+export type DashboardAlert = {
+  title: string;
+  detail: string;
+  severity: "critical" | "warning" | "info";
+};
+
 export type TriageItem = {
   patientId: string;
   riskLevel: RiskLevel;

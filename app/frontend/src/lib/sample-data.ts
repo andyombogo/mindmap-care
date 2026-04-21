@@ -1,31 +1,109 @@
-import type { DashboardMetric, PatientRiskSummary, ScreeningQuestion, TriageItem } from "@/lib/types";
+import type {
+  DashboardAlert,
+  DashboardMetric,
+  DashboardTrendItem,
+  FacilitySummary,
+  PatientRiskSummary,
+  RiskMixItem,
+  ScreeningQuestion,
+  TriageItem
+} from "@/lib/types";
 
 export const dashboardMetrics: DashboardMetric[] = [
   {
     label: "Total screenings",
-    value: "148",
-    detail: "Across four active facilities"
+    value: "428",
+    detail: "Last 30 days across active sites"
   },
   {
-    label: "High priority",
-    value: "17",
-    detail: "Needs clinician review or escalation"
+    label: "High risk",
+    value: "46",
+    detail: "Includes 9 same-day reviews"
   },
   {
-    label: "Follow-up complete",
-    value: "72%",
-    detail: "Documented within target window"
+    label: "Medium risk",
+    value: "138",
+    detail: "Needs planned follow-up"
+  },
+  {
+    label: "Low risk",
+    value: "244",
+    detail: "Routine guidance or monitoring"
+  },
+  {
+    label: "Follow-up pending",
+    value: "63",
+    detail: "19 overdue beyond target window"
   }
 ];
 
-export const dashboardTrend = [
-  { day: "Mon", screenings: 18, highRisk: 2, urgent: 0 },
-  { day: "Tue", screenings: 24, highRisk: 4, urgent: 1 },
-  { day: "Wed", screenings: 21, highRisk: 3, urgent: 1 },
-  { day: "Thu", screenings: 28, highRisk: 5, urgent: 2 },
-  { day: "Fri", screenings: 19, highRisk: 2, urgent: 0 },
-  { day: "Sat", screenings: 11, highRisk: 1, urgent: 0 },
-  { day: "Sun", screenings: 9, highRisk: 0, urgent: 0 }
+export const dashboardTrend: DashboardTrendItem[] = [
+  { day: "Mon", screenings: 42, highRisk: 5, mediumRisk: 12, lowRisk: 25, followUpPending: 8 },
+  { day: "Tue", screenings: 58, highRisk: 8, mediumRisk: 18, lowRisk: 32, followUpPending: 12 },
+  { day: "Wed", screenings: 51, highRisk: 7, mediumRisk: 15, lowRisk: 29, followUpPending: 10 },
+  { day: "Thu", screenings: 64, highRisk: 9, mediumRisk: 21, lowRisk: 34, followUpPending: 14 },
+  { day: "Fri", screenings: 49, highRisk: 6, mediumRisk: 14, lowRisk: 29, followUpPending: 9 },
+  { day: "Sat", screenings: 31, highRisk: 3, mediumRisk: 9, lowRisk: 19, followUpPending: 6 },
+  { day: "Sun", screenings: 24, highRisk: 2, mediumRisk: 7, lowRisk: 15, followUpPending: 4 }
+];
+
+export const dashboardRiskMix: RiskMixItem[] = [
+  { label: "High risk", value: 46, level: "high" },
+  { label: "Medium risk", value: 138, level: "medium" },
+  { label: "Low risk", value: 244, level: "low" }
+];
+
+export const facilitySummaries: FacilitySummary[] = [
+  {
+    name: "Kisumu outreach clinic",
+    programme: "Community mental health",
+    screenings: 118,
+    highRisk: 14,
+    followUpPending: 21,
+    dataCompleteness: "92%"
+  },
+  {
+    name: "Nairobi primary care",
+    programme: "Integrated primary care",
+    screenings: 136,
+    highRisk: 17,
+    followUpPending: 18,
+    dataCompleteness: "96%"
+  },
+  {
+    name: "Eldoret county clinic",
+    programme: "Functional risk review",
+    screenings: 84,
+    highRisk: 9,
+    followUpPending: 16,
+    dataCompleteness: "88%"
+  },
+  {
+    name: "Mombasa clinic",
+    programme: "Routine screening",
+    screenings: 90,
+    highRisk: 6,
+    followUpPending: 8,
+    dataCompleteness: "97%"
+  }
+];
+
+export const dashboardAlerts: DashboardAlert[] = [
+  {
+    title: "19 follow-ups are overdue",
+    detail: "Prioritize patient contact lists for Kisumu and Eldoret today.",
+    severity: "critical"
+  },
+  {
+    title: "Data completeness below target at Eldoret",
+    detail: "Functional assessment fields are missing in 12% of records.",
+    severity: "warning"
+  },
+  {
+    title: "High-risk load increased this week",
+    detail: "Review staffing coverage for same-day clinician review.",
+    severity: "info"
+  }
 ];
 
 export const triageQueue: TriageItem[] = [
