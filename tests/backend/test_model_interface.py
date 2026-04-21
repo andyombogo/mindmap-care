@@ -44,6 +44,38 @@ def test_threshold_triage_without_safety_flags():
     assert triage_for_score(90).category == TriageCategory.URGENT
 
 
+def test_mock_engine_is_deterministic_for_same_screening():
+    engine = MockRiskInferenceEngine()
+    screening = ScreeningInput(
+        screening_id="screening-deterministic",
+        site_id="clinic-001",
+        screener_role="clinician",
+        age_years=35,
+        sex="male",
+        consent_confirmed=True,
+        responses=[
+            {
+                "code": "mh-anxiety",
+                "label": "Anxiety",
+                "domain": "mental_health",
+                "value": 2,
+            },
+            {
+                "code": "fn-daily",
+                "label": "Daily living difficulty",
+                "domain": "function",
+                "value": 1,
+            },
+        ],
+    )
+
+    first_prediction = engine.run(screening)
+    second_prediction = engine.run(screening)
+
+    assert first_prediction == second_prediction
+    assert first_prediction.risk_score_id.startswith("risk-")
+
+
 def test_preprocessing_tracks_missing_fields():
     engine = MockRiskInferenceEngine()
     screening = ScreeningInput(

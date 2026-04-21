@@ -1,11 +1,69 @@
+"use client";
+
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { RiskBadge } from "@/components/RiskBadge";
+import { getLatestRiskSummary, getRiskSummary } from "@/lib/api";
 import { samplePatientRiskSummary } from "@/lib/sample-data";
+import type { ApiPatientRiskSummary, PatientRiskSummary, RiskLevel } from "@/lib/types";
+
+type LoadState = "loading" | "ready" | "fallback" | "error";
 
 export default function PatientRiskSummaryPage() {
-  const patient = samplePatientRiskSummary;
+  return (
+    <Suspense fallback={<div className="empty-state">Loading patient risk summary.</div>}>
+      <PatientRiskSummaryContent />
+    </Suspense>
+  );
+}
+
+function PatientRiskSummaryContent() {
+  const searchParams = useSearchParams();
+  const screeningId = searchParams.get("screeningId");
+  const [patient, setPatient] = useState<PatientRiskSummary>(samplePatientRiskSummary);
+  const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [message, setMessage] = useState("Loading risk summary from backend.");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const request = screeningId ? getRiskSummary(screeningId) : getLatestRiskSummary();
+
+    request
+      .then((summary) => {
+        if (!isMounted) {
+          return;
+        }
+        setPatient(mapApiSummaryToPatient(summary));
+        setLoadState("ready");
+        setMessage("Live mock inference result loaded from backend.");
+      })
+      .catch(() => {
+        if (!isMounted) {
+          return;
+        }
+        setPatient(samplePatientRiskSummary);
+        setLoadState("fallback");
+        setMessage("Backend summary unavailable. Showing demo placeholder result.");
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [screeningId]);
+
+  const patientAge = useMemo(
+    () => (typeof patient.age === "number" ? `${patient.age} years` : patient.age),
+    [patient.age]
+  );
 
   return (
     <main className="page-stack">
+      <div className={`integration-banner ${loadState}`}>
+        <strong>{loadState === "ready" ? "Connected" : "Demo fallback"}</strong>
+        <span>{message}</span>
+      </div>
+
       <header className="risk-summary-header">
         <div>
           <p className="eyebrow">Patient risk summary</p>
@@ -16,7 +74,7 @@ export default function PatientRiskSummaryPage() {
             judgment.
           </p>
           <div className="patient-demographics" aria-label="Patient context">
-            <span>{patient.age} years</span>
+            <span>{patientAge}</span>
             <span>{patient.sex}</span>
             <span>{patient.visitType}</span>
             <span>{patient.site}</span>
@@ -81,7 +139,7 @@ export default function PatientRiskSummaryPage() {
           </div>
           <div className="factor-list">
             {patient.factors.map((factor) => (
-              <div className="factor-card" key={factor.name}>
+              <div className="factor-card" key={`${factor.name}-${factor.description}`}>
                 <div>
                   <span className={`risk-dot ${factor.severity}`} />
                   <strong>{factor.name}</strong>
@@ -176,4 +234,65 @@ export default function PatientRiskSummaryPage() {
       </section>
     </main>
   );
+}
+
+function mapApiSummaryToPatient(summary: ApiPatientRiskSummary): PatientRiskSummary {
+  const riskLevel = summary.risk_category as RiskLevel;
+
+  return {
+    displayId: summary.display_id,
+    age: summary.age_years ?? "Age not recorded",
+    sex: titleCase(summary.sex),
+    visitType: "Submitted screening",
+    riskLevel,
+    score: Math.round(summary.score),
+    confidence: Math.round(summary.confidence * 100),
+    summary: summary.summary,
+    recommendedAction: summary.recommended_action,
+    actionRationale: summary.explanation_text,
+    triagePriority: summary.triage_priority,
+    triageWindow: summary.triage_window,
+    reviewStatus: summary.requires_human_review ? "Awaiting clinician review" : "Review optional",
+    assignedTo: summary.requires_human_review ? "Clinical review queue" : "Facility team",
+    site: summary.site_id,
+    screener: summary.screener_role.replaceAll("_", " "),
+    screenedAt: formatDate(summary.screened_at),
+    modelVersion: summary.model_version,
+    ruleset: summary.model_id,
+    dataCompleteness: `${Math.round(summary.data_quality_score * 100)}%`,
+    reportStatus: summary.report_status,
+    audit: {
+      screeningId: summary.screening_id,
+      riskScoreId: summary.risk_score_id,
+      generatedAt: formatDate(summary.generated_at),
+      generatedBy: summary.model_id,
+      lastReviewedAt: "Not yet reviewed",
+      lastReviewedBy: "Pending clinician"
+    },
+    explanation: {
+      headline: `${titleCase(summary.risk_category)} screening risk requiring ${summary.triage_window.toLowerCase()}.`,
+      detail: summary.explanation_text,
+      caveats: summary.caveats
+    },
+    factors: summary.contributing_factors.map((factor) => ({
+      name: factor.name,
+      severity: riskLevel,
+      contribution: `${Math.round(factor.contribution * 100)}%`,
+      description: factor.description
+    }))
+  };
+}
+
+function titleCase(value: string) {
+  return value
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function formatDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+  return date.toLocaleString();
 }

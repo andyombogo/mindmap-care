@@ -63,7 +63,7 @@ export type PatientRiskFactor = {
 
 export type PatientRiskSummary = {
   displayId: string;
-  age: number;
+  age: number | string;
   sex: string;
   visitType: string;
   riskLevel: RiskLevel;
@@ -122,4 +122,64 @@ export type ScreeningSubmission = {
     value: string | number | boolean | null;
     domain: string;
   }>;
+};
+
+export type ScreeningSubmissionResponse = {
+  screening_id: string;
+  status: "accepted";
+  received_items: number;
+  next_steps: string[];
+  risk_score_id: string | null;
+  risk_category: RiskLevel | null;
+  risk_score: number | null;
+  recommended_action: string | null;
+  risk_summary_url: string | null;
+};
+
+export type ApiRiskSummaryFactor = {
+  name: string;
+  domain: string;
+  direction: string;
+  contribution: number;
+  description: string;
+};
+
+export type ApiPatientRiskSummary = {
+  screening_id: string;
+  risk_score_id: string;
+  patient_reference_id: string | null;
+  display_id: string;
+  age_years: number | null;
+  sex: string;
+  site_id: string;
+  screener_role: string;
+  screened_at: string;
+  risk_category: RiskLevel;
+  score: number;
+  confidence: number;
+  recommended_action: string;
+  requires_human_review: boolean;
+  triage_priority: string;
+  triage_window: string;
+  summary: string;
+  explanation_text: string;
+  contributing_factors: ApiRiskSummaryFactor[];
+  caveats: string[];
+  model_id: string;
+  model_version: string;
+  generated_at: string;
+  data_quality_score: number;
+  missing_fields: string[];
+  report_status: string;
+};
+
+export type ApiDashboardSummary = {
+  total_screenings: number;
+  high_risk_cases: number;
+  medium_risk_cases: number;
+  low_risk_cases: number;
+  urgent_referrals: number;
+  pending_follow_ups: number;
+  completed_referrals: number;
+  risk_distribution: Record<RiskLevel, number>;
 };

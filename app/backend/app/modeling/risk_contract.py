@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import hashlib
+import json
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Literal, Protocol
-from uuid import uuid4
 
 from pydantic import BaseModel, Field, field_validator
+
+MOCK_MODEL_TIMESTAMP = datetime(2026, 1, 1, tzinfo=timezone.utc)
 
 
 class TriageCategory(str, Enum):
@@ -181,7 +184,7 @@ class MockScreeningPreprocessor:
     """Deterministic preprocessing used until validated models are introduced."""
 
     def transform(self, screening: ScreeningInput) -> PreprocessedScreening:
-        screening_id = screening.screening_id or f"screening-{uuid4()}"
+        screening_id = screening.screening_id or f"screening-{_stable_digest(screening.model_dump(mode='json'), 12)}"
         domain_scores: dict[str, float] = {}
         feature_vector: dict[str, float] = {}
         missing_fields: list[str] = []
@@ -237,7 +240,7 @@ class MockRiskInferenceEngine:
             version="0.1.0",
             model_type="mock_rules",
             threshold_version="thresholds-v0.1",
-            generated_at=datetime.now(timezone.utc),
+            generated_at=MOCK_MODEL_TIMESTAMP,
             intended_use="Development-only screening and triage workflow support.",
             limitations=[
                 "Not trained or validated for clinical decision-making.",
@@ -256,7 +259,7 @@ class MockRiskInferenceEngine:
         explanation = self._explain(features, score, threshold.category)
 
         return RiskPredictionOutput(
-            risk_score_id=f"risk-{uuid4()}",
+            risk_score_id=f"risk-{_stable_digest(features.model_dump(mode='json'), 12)}",
             screening_id=features.screening_id,
             risk_category=threshold.category,
             score=score,
@@ -265,7 +268,7 @@ class MockRiskInferenceEngine:
             requires_human_review=threshold.requires_human_review,
             thresholds=list(self.thresholds),
             explanation=explanation,
-            model_metadata=self.metadata.model_copy(update={"generated_at": datetime.now(timezone.utc)}),
+            model_metadata=self.metadata,
         )
 
     def _score(self, features: PreprocessedScreening) -> float:
@@ -351,6 +354,12 @@ def triage_for_score(
 def screening_input_from_mapping(payload: dict[str, Any]) -> ScreeningInput:
     """Build a canonical screening input from API or test dictionaries."""
     return ScreeningInput.model_validate(payload)
+
+
+def _stable_digest(payload: dict[str, Any], length: int) -> str:
+    """Return a stable digest for deterministic mock identifiers."""
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:length]
 
 
 def _coerce_response_value(value: str | int | float | bool | None) -> float:

@@ -6,6 +6,8 @@ class DashboardSummary(BaseModel):
 
     total_screenings: int = Field(ge=0)
     high_risk_cases: int = Field(ge=0)
+    medium_risk_cases: int = Field(ge=0)
+    low_risk_cases: int = Field(ge=0)
     urgent_referrals: int = Field(ge=0)
     pending_follow_ups: int = Field(ge=0)
     completed_referrals: int = Field(ge=0)

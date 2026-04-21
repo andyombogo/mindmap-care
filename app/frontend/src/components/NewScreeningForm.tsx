@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChangeEvent, FormEvent, ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { submitScreening } from "@/lib/api";
 import type { ScreeningSubmission } from "@/lib/types";
@@ -71,6 +72,7 @@ const urgencyLabels = {
 };
 
 export function NewScreeningForm() {
+  const router = useRouter();
   const [form, setForm] = useState<FormState>(initialFormState);
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<string>("Draft not saved");
@@ -243,8 +245,10 @@ export function NewScreeningForm() {
     setIsSubmitting(true);
 
     try {
-      await submitScreening(buildSubmission());
-      setStatus("Submitted to API placeholder");
+      const response = await submitScreening(buildSubmission());
+      setStatus(`Submitted. Mock risk category: ${response.risk_category ?? "pending"}`);
+      window.localStorage.setItem("mindmap-care-last-screening-id", response.screening_id);
+      router.push(`/patients/risk-summary?screeningId=${response.screening_id}`);
     } catch {
       setStatus("Submission could not reach API. Draft kept locally.");
       window.localStorage.setItem("mindmap-care-screening-draft", JSON.stringify(form));

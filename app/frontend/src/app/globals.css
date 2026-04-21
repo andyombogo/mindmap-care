@@ -1103,6 +1103,37 @@ textarea {
   background: #fbfdfc;
 }
 
+.integration-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fbfdfc;
+  color: var(--muted);
+}
+
+.integration-banner strong {
+  color: var(--text);
+}
+
+.integration-banner.ready {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.integration-banner.loading {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.integration-banner.fallback,
+.integration-banner.error {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
 @media (max-width: 1040px) {
   .app-shell {
     grid-template-columns: 1fr;

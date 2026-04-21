@@ -1,4 +1,9 @@
-import type { ScreeningSubmission } from "@/lib/types";
+import type {
+  ApiDashboardSummary,
+  ApiPatientRiskSummary,
+  ScreeningSubmission,
+  ScreeningSubmissionResponse
+} from "@/lib/types";
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
@@ -26,15 +31,20 @@ export function getHealthStatus() {
 }
 
 export function submitScreening(payload: ScreeningSubmission) {
-  return fetchJson<{ screening_id: string; status: string }>(
-    "/api/v1/screenings",
-    {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }
-  );
+  return fetchJson<ScreeningSubmissionResponse>("/api/v1/screenings", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function getLatestRiskSummary() {
+  return fetchJson<ApiPatientRiskSummary>("/api/v1/screenings/risk-summary/latest");
+}
+
+export function getRiskSummary(screeningId: string) {
+  return fetchJson<ApiPatientRiskSummary>(`/api/v1/screenings/${screeningId}/risk-summary`);
 }
 
 export function getDashboardSummary() {
-  return fetchJson("/api/v1/dashboard/summary");
+  return fetchJson<ApiDashboardSummary>("/api/v1/dashboard/summary");
 }

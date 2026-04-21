@@ -1,4 +1,8 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import { StatCard } from "@/components/StatCard";
+import { getDashboardSummary } from "@/lib/api";
 import {
   dashboardAlerts,
   dashboardMetrics,
@@ -6,13 +10,73 @@ import {
   dashboardTrend,
   facilitySummaries
 } from "@/lib/sample-data";
+import type { ApiDashboardSummary, DashboardMetric } from "@/lib/types";
 
 const maxScreenings = Math.max(...dashboardTrend.map((row) => row.screenings));
 const maxPending = Math.max(...dashboardTrend.map((row) => row.followUpPending));
 
+type LoadState = "loading" | "ready" | "fallback";
+
 export default function DashboardOverviewPage() {
+  const [summary, setSummary] = useState<ApiDashboardSummary | null>(null);
+  const [loadState, setLoadState] = useState<LoadState>("loading");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getDashboardSummary()
+      .then((data) => {
+        if (!isMounted) {
+          return;
+        }
+        setSummary(data);
+        setLoadState("ready");
+      })
+      .catch(() => {
+        if (!isMounted) {
+          return;
+        }
+        setSummary(null);
+        setLoadState("fallback");
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const metrics = useMemo(() => buildDashboardMetrics(summary), [summary]);
+  const riskMix = useMemo(
+    () =>
+      summary
+        ? [
+            { label: "High risk", value: summary.high_risk_cases, level: "high" as const },
+            { label: "Medium risk", value: summary.medium_risk_cases, level: "medium" as const },
+            { label: "Low risk", value: summary.low_risk_cases, level: "low" as const }
+          ]
+        : dashboardRiskMix,
+    [summary]
+  );
+
   return (
     <main className="page-stack">
+      <div className={`integration-banner ${loadState}`}>
+        <strong>
+          {loadState === "loading"
+            ? "Loading"
+            : loadState === "ready"
+              ? "Backend connected"
+              : "Demo fallback"}
+        </strong>
+        <span>
+          {loadState === "loading"
+            ? "Fetching dashboard summary from the FastAPI endpoint."
+            : loadState === "ready"
+            ? "Dashboard totals are loaded from the FastAPI summary endpoint."
+            : "Backend summary unavailable. Showing placeholder operations data."}
+        </span>
+      </div>
+
       <header className="page-header">
         <div>
           <p className="eyebrow">Dashboard overview</p>
@@ -26,7 +90,7 @@ export default function DashboardOverviewPage() {
       </header>
 
       <section className="dashboard-metric-grid" aria-label="Dashboard metrics">
-        {dashboardMetrics.map((metric) => (
+        {metrics.map((metric) => (
           <StatCard key={metric.label} {...metric} />
         ))}
       </section>
@@ -64,7 +128,7 @@ export default function DashboardOverviewPage() {
             </div>
           </div>
           <div className="risk-mix">
-            {dashboardRiskMix.map((item) => (
+            {riskMix.map((item) => (
               <div className="risk-mix-row" key={item.label}>
                 <div>
                   <span className={`risk-dot ${item.level === "medium" ? "moderate" : item.level}`} />
@@ -148,4 +212,38 @@ export default function DashboardOverviewPage() {
       </section>
     </main>
   );
+}
+
+function buildDashboardMetrics(summary: ApiDashboardSummary | null): DashboardMetric[] {
+  if (!summary) {
+    return dashboardMetrics;
+  }
+
+  return [
+    {
+      label: "Total screenings",
+      value: String(summary.total_screenings),
+      detail: "Submitted through the MVP API"
+    },
+    {
+      label: "High risk",
+      value: String(summary.high_risk_cases),
+      detail: `${summary.urgent_referrals} urgent referrals`
+    },
+    {
+      label: "Medium risk",
+      value: String(summary.medium_risk_cases),
+      detail: "Needs planned follow-up"
+    },
+    {
+      label: "Low risk",
+      value: String(summary.low_risk_cases),
+      detail: "Routine guidance or monitoring"
+    },
+    {
+      label: "Follow-up pending",
+      value: String(summary.pending_follow_ups),
+      detail: `${summary.completed_referrals} referrals completed`
+    }
+  ];
 }
