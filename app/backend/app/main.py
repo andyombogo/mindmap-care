@@ -1,33 +1,45 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.config import get_settings
-from app.routes.health import router as health_router
+from app.api.v1.router import api_router
+from app.core.config import get_settings
+from app.core.logging import configure_logging
+from app.schemas.health import HealthResponse
 
 
 def create_app() -> FastAPI:
-    """Create the FastAPI application with production-friendly seams."""
+    """Create the FastAPI application."""
     settings = get_settings()
+    configure_logging(settings.log_level)
+
     app = FastAPI(
         title=settings.app_name,
-        version="0.1.0",
-        description="Backend API starter for MindMap Care.",
+        version=settings.app_version,
+        description=(
+            "Explainable AI screening and triage API for mental health, "
+            "cognitive, and functional risk stratification."
+        ),
     )
 
-    allowed_origins = [
-        origin.strip()
-        for origin in settings.cors_allow_origins.split(",")
-        if origin.strip()
-    ]
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=allowed_origins or ["http://localhost:3000"],
+        allow_origins=settings.cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
 
-    app.include_router(health_router)
+    @app.get("/health", response_model=HealthResponse, tags=["health"])
+    def health_check() -> HealthResponse:
+        """Unversioned health check for containers and uptime monitors."""
+        return HealthResponse(
+            status="ok",
+            service=settings.service_name,
+            environment=settings.environment,
+            version=settings.app_version,
+        )
+
+    app.include_router(api_router, prefix=settings.api_v1_prefix)
     return app
 
 
