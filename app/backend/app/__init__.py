@@ -1,0 +1,1 @@
+"""MindMap Care backend package."""

@@ -1,0 +1,37 @@
+services:
+  # Frontend service: Next.js app for clinicians, care coordinators, or admins.
+  frontend:
+    build:
+      context: ./app/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./app/frontend/.env.example
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    volumes:
+      - ./app/frontend:/workspace
+      - frontend_node_modules:/workspace/node_modules
+    depends_on:
+      - backend
+    command: npm run dev -- --hostname 0.0.0.0
+
+  # Backend service: FastAPI API for care workflows, risk services, and integrations.
+  backend:
+    build:
+      context: ./app/backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./app/backend/.env.example
+    volumes:
+      - ./app/backend:/workspace
+      - ./data:/workspace/data
+      - ./models:/workspace/models
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  # Keeps container-installed node modules separate from the bind-mounted source tree.
+  frontend_node_modules:

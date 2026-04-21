@@ -1,0 +1,13 @@
+# Backend local runtime
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local API logs and temp files
+*.log
+.tmp/

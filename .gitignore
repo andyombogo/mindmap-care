@@ -1,0 +1,51 @@
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Environment files
+.env
+.env.*
+!.env.example
+!app/frontend/.env.example
+!app/backend/.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build and coverage outputs
+dist/
+build/
+coverage/
+.coverage
+
+# Local data and generated artifacts
+data/raw/
+data/processed/
+data/private/
+models/artifacts/
+models/checkpoints/
+dashboards/exports/
+
+# Docker and local runtime noise
+*.pid
+*.log
+.tmp/

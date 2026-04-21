@@ -1,0 +1,15 @@
+# Data is private/local by default.
+raw/
+processed/
+private/
+*.csv
+*.xlsx
+*.parquet
+*.jsonl
+
+# Keep safe documentation.
+!README.md
+!.gitignore
+!schemas/
+!schemas/*.md
+!schemas/*.json.example

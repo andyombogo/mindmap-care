@@ -1,0 +1,12 @@
+# Keep generated model files local by default.
+artifacts/
+checkpoints/
+*.joblib
+*.pkl
+*.onnx
+
+# Allow documentation and intentionally reviewed metadata.
+!README.md
+!.gitignore
+!*.md
+!*.json.example
