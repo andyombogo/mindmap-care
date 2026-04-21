@@ -6,34 +6,68 @@ export default function PatientRiskSummaryPage() {
 
   return (
     <main className="page-stack">
-      <header className="page-header">
+      <header className="risk-summary-header">
         <div>
           <p className="eyebrow">Patient risk summary</p>
           <h1>{patient.displayId}</h1>
           <p className="lede">
-            Explainable risk summary for clinician review. This sample keeps
-            the score visible while foregrounding contributing factors and next
-            actions.
+            Explainable screening output for clinician review and triage. This
+            page does not present a diagnosis and should not replace clinical
+            judgment.
           </p>
+          <div className="patient-demographics" aria-label="Patient context">
+            <span>{patient.age} years</span>
+            <span>{patient.sex}</span>
+            <span>{patient.visitType}</span>
+            <span>{patient.site}</span>
+          </div>
         </div>
-        <RiskBadge level={patient.riskLevel} />
+
+        <div className="risk-header-actions">
+          <button className="button secondary" type="button">
+            Export report
+          </button>
+          <RiskBadge level={patient.riskLevel} />
+        </div>
       </header>
 
       <section className="content-grid three-column">
-        <article className="panel">
-          <p className="eyebrow">Risk score</p>
-          <h2>{patient.score}/100</h2>
+        <article className="panel risk-score-panel">
+          <p className="eyebrow">Overall risk category</p>
+          <div className="risk-score-lockup">
+            <strong>{patient.score}</strong>
+            <span>/100</span>
+          </div>
           <p>{patient.summary}</p>
+          <progress
+            aria-label={`Confidence ${patient.confidence}%`}
+            className="confidence-bar"
+            max={100}
+            value={patient.confidence}
+          />
+          <p className="confidence-copy">Confidence estimate: {patient.confidence}%</p>
         </article>
+
         <article className="panel">
-          <p className="eyebrow">Recommended action</p>
+          <p className="eyebrow">Recommended next action</p>
           <h2>{patient.recommendedAction}</h2>
-          <p>Confirm clinical context before referral or escalation.</p>
+          <p>{patient.actionRationale}</p>
         </article>
-        <article className="panel">
-          <p className="eyebrow">Review status</p>
-          <h2>{patient.reviewStatus}</h2>
-          <p>Assigned to {patient.assignedTo}</p>
+
+        <article className="panel triage-priority-card">
+          <p className="eyebrow">Triage priority</p>
+          <h2>{patient.triagePriority}</h2>
+          <p>{patient.triageWindow}</p>
+          <div className="summary-list compact">
+            <div className="summary-item">
+              <span>Review status</span>
+              <strong>{patient.reviewStatus}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Assigned to</span>
+              <strong>{patient.assignedTo}</strong>
+            </div>
+          </div>
         </article>
       </section>
 
@@ -41,42 +75,101 @@ export default function PatientRiskSummaryPage() {
         <article className="panel">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">Explanation</p>
-              <h2>Top contributing factors</h2>
+              <p className="eyebrow">Contributing factors</p>
+              <h2>Signals behind the triage recommendation</h2>
             </div>
           </div>
-          <div className="list-stack">
+          <div className="factor-list">
             {patient.factors.map((factor) => (
-              <div className="factor-row" key={factor.name}>
-                <span className={`risk-dot ${factor.severity}`} />
+              <div className="factor-card" key={factor.name}>
                 <div>
+                  <span className={`risk-dot ${factor.severity}`} />
                   <strong>{factor.name}</strong>
-                  <p>{factor.description}</p>
                 </div>
+                <span className="contribution-pill">{factor.contribution}</span>
+                <p>{factor.description}</p>
               </div>
             ))}
           </div>
         </article>
 
+        <article className="panel explainability-panel">
+          <p className="eyebrow">Explainability panel</p>
+          <h2>{patient.explanation.headline}</h2>
+          <p>{patient.explanation.detail}</p>
+          <div className="clinical-warning">
+            This output supports review and triage. It is not a diagnosis.
+          </div>
+          <div className="list-stack">
+            {patient.explanation.caveats.map((caveat) => (
+              <div className="timeline-row" key={caveat}>
+                <span className="risk-dot moderate" />
+                <p>{caveat}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+
+      <section className="content-grid two-column">
         <article className="panel">
-          <p className="eyebrow">Clinical context</p>
-          <h2>Screening details</h2>
+          <p className="eyebrow">Audit metadata</p>
+          <h2>Traceability</h2>
           <div className="summary-list">
             <div className="summary-item">
-              <span>Site</span>
-              <strong>{patient.site}</strong>
+              <span>Screening ID</span>
+              <strong>{patient.audit.screeningId}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Risk score ID</span>
+              <strong>{patient.audit.riskScoreId}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Generated at</span>
+              <strong>{patient.audit.generatedAt}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Generated by</span>
+              <strong>{patient.audit.generatedBy}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Last reviewed</span>
+              <strong>{patient.audit.lastReviewedAt}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Reviewed by</span>
+              <strong>{patient.audit.lastReviewedBy}</strong>
+            </div>
+          </div>
+        </article>
+
+        <article className="panel">
+          <p className="eyebrow">Model and report status</p>
+          <h2>Screening output details</h2>
+          <div className="summary-list">
+            <div className="summary-item">
+              <span>Model version</span>
+              <strong>{patient.modelVersion}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Ruleset</span>
+              <strong>{patient.ruleset}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Data completeness</span>
+              <strong>{patient.dataCompleteness}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Report status</span>
+              <strong>{patient.reportStatus}</strong>
             </div>
             <div className="summary-item">
               <span>Screener</span>
               <strong>{patient.screener}</strong>
             </div>
             <div className="summary-item">
-              <span>Screened</span>
+              <span>Screened at</span>
               <strong>{patient.screenedAt}</strong>
-            </div>
-            <div className="summary-item">
-              <span>Model version</span>
-              <strong>{patient.modelVersion}</strong>
             </div>
           </div>
         </article>

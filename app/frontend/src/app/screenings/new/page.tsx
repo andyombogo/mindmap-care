@@ -8,8 +8,8 @@ export default function NewScreeningPage() {
           <p className="eyebrow">New screening</p>
           <h1>Capture a structured screening encounter.</h1>
           <p className="lede">
-            This starter form models the first MVP flow: consent, site context,
-            presenting concerns, and a small set of domain questions.
+            Capture patient context, assessment domains, clinical notes, and
+            referral urgency in a structured workflow for human review.
           </p>
         </div>
       </header>
