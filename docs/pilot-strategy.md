@@ -88,6 +88,28 @@ Before pilot launch:
 - Pilot metrics are agreed
 - Data collection and retention plan is approved
 
+## MVP Pilot-Readiness Status
+
+The current repository is ready for internal walkthroughs and partner-facing workflow review, but not for live clinical use.
+
+Ready for demo review:
+
+- Synthetic screening records load by default for dashboard, triage queue, and risk summary walkthroughs
+- Screening submission can call the backend and return a deterministic mock risk result
+- Triage pages clearly support clinician review rather than autonomous decisions
+- Documentation states the non-diagnostic, validation-dependent positioning
+- Backend tests cover endpoint behavior, schema validity, demo data seeding, and mock inference
+
+Not ready for live pilot use:
+
+- No authentication or role-based access control
+- No persistent database or immutable audit trail
+- No validated clinical model or local performance evidence
+- No production data protection assessment
+- No incident reporting, override logging, or deployment monitoring workflow
+
+Use this status section as a living checklist. Each item should be converted into a tracked issue before a real-world pilot.
+
 ## Pilot Operating Model
 
 During the pilot:

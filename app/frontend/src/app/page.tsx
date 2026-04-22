@@ -23,6 +23,21 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="trust-grid" aria-label="Clinical safe-use guardrails">
+        <article className="trust-item">
+          <strong>Screening support only</strong>
+          <p>Outputs are not diagnoses and require clinical interpretation.</p>
+        </article>
+        <article className="trust-item">
+          <strong>Human review built in</strong>
+          <p>Moderate, high, and urgent cases remain visible for care-team action.</p>
+        </article>
+        <article className="trust-item">
+          <strong>Synthetic demo data</strong>
+          <p>Seeded records are fictional and intended for workflow testing.</p>
+        </article>
+      </section>
+
       <section className="metric-grid" aria-label="Today at a glance">
         <article className="metric-card">
           <span className="metric-label">Screenings today</span>

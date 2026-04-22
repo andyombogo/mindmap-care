@@ -22,7 +22,7 @@ The frontend includes:
 - triage queue route at `/triage`
 - dashboard overview route at `/dashboard`
 - reusable UI components in `src/components`
-- placeholder API helpers in `src/lib/api.ts`
+- API helpers with basic error handling in `src/lib/api.ts`
 - sample clinical workflow data in `src/lib/sample-data.ts`
 
 ## Local Development
@@ -33,6 +33,8 @@ npm run dev
 ```
 
 The app expects `NEXT_PUBLIC_API_BASE_URL` to point at the backend API.
+
+When the backend is reachable, the dashboard, triage queue, screening submission, and risk summary flows use the FastAPI MVP endpoints. If the backend is unavailable, key demo screens fall back to clearly labelled static placeholder data so walkthroughs do not fail silently.
 
 ## Docker
 

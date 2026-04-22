@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RiskBadge } from "@/components/RiskBadge";
+import { formatApiError, getTriageQueue } from "@/lib/api";
 import { triageQueue } from "@/lib/sample-data";
-import type { RiskLevel, TriageItem } from "@/lib/types";
+import type { ApiTriageQueueItem, RiskLevel, TriageItem } from "@/lib/types";
 
 type SortKey = "priority" | "screeningTime" | "riskLevel" | "followUpStatus";
 type RiskFilter = RiskLevel | "all";
 type FollowUpFilter = TriageItem["followUpStatus"] | "all";
+type LoadState = "loading" | "ready" | "fallback";
 
 const riskRank: Record<RiskLevel, number> = {
   urgent: 4,
@@ -31,11 +33,40 @@ export default function TriageQueuePage() {
   const [followUpFilter, setFollowUpFilter] = useState<FollowUpFilter>("all");
   const [showMissingOnly, setShowMissingOnly] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>("priority");
+  const [queueItems, setQueueItems] = useState<TriageItem[]>(triageQueue);
+  const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [loadMessage, setLoadMessage] = useState("Loading the clinician worklist from the FastAPI demo endpoint.");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getTriageQueue()
+      .then((items) => {
+        if (!isMounted) {
+          return;
+        }
+        setQueueItems(items.map(mapApiTriageItem));
+        setLoadState("ready");
+        setLoadMessage("Queue loaded from seeded synthetic demo screenings.");
+      })
+      .catch((error) => {
+        if (!isMounted) {
+          return;
+        }
+        setQueueItems(triageQueue);
+        setLoadState("fallback");
+        setLoadMessage(`Backend queue unavailable: ${formatApiError(error)} Showing static demo queue.`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const filteredItems = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
 
-    return triageQueue
+    return queueItems
       .filter((item) => {
         const matchesSearch =
           !normalizedSearch ||
@@ -60,18 +91,29 @@ export default function TriageQueuePage() {
         return matchesSearch && matchesRisk && matchesFollowUp && matchesMissing;
       })
       .sort((a, b) => compareTriageItems(a, b, sortKey));
-  }, [followUpFilter, riskFilter, search, showMissingOnly, sortKey]);
+  }, [followUpFilter, queueItems, riskFilter, search, showMissingOnly, sortKey]);
 
-  const urgentCount = triageQueue.filter((item) => item.riskLevel === "urgent").length;
-  const missingDataCount = triageQueue.filter(
+  const urgentCount = queueItems.filter((item) => item.riskLevel === "urgent").length;
+  const missingDataCount = queueItems.filter(
     (item) => item.missingDataFlags.length > 0
   ).length;
-  const overdueCount = triageQueue.filter(
+  const overdueCount = queueItems.filter(
     (item) => item.followUpStatus === "overdue"
   ).length;
 
   return (
     <main className="page-stack">
+      <div className={`integration-banner ${loadState}`}>
+        <strong>
+          {loadState === "loading"
+            ? "Loading"
+            : loadState === "ready"
+              ? "Backend connected"
+              : "Demo fallback"}
+        </strong>
+        <span>{loadMessage}</span>
+      </div>
+
       <header className="page-header">
         <div>
           <p className="eyebrow">Triage queue</p>
@@ -238,7 +280,14 @@ export default function TriageQueuePage() {
                   </td>
                   <td>{item.owner}</td>
                   <td>
-                    <Link className="button secondary table-action" href="/patients/risk-summary">
+                    <Link
+                      className="button secondary table-action"
+                      href={
+                        item.screeningId
+                          ? `/patients/risk-summary?screeningId=${item.screeningId}`
+                          : "/patients/risk-summary"
+                      }
+                    >
                       Open
                     </Link>
                   </td>
@@ -318,4 +367,59 @@ function followUpLabel(status: TriageItem["followUpStatus"]) {
   };
 
   return labels[status];
+}
+
+function mapApiTriageItem(item: ApiTriageQueueItem): TriageItem {
+  const screenedAt = new Date(item.screened_at);
+  const screeningTimestamp = Number.isNaN(screenedAt.getTime())
+    ? 0
+    : screenedAt.getTime();
+
+  return {
+    screeningId: item.screening_id,
+    patientId: item.display_id,
+    riskLevel: item.risk_category,
+    score: Math.round(item.risk_score),
+    concern: item.concern_summary,
+    nextAction: item.recommended_action,
+    owner: item.owner,
+    waiting: item.triage_window,
+    site: titleCase(item.site_id),
+    screeningTime: formatDate(item.screened_at),
+    screeningTimestamp,
+    referralUrgency: titleCase(item.referral_urgency),
+    priority: priorityFromRisk(item.risk_category, item.risk_score),
+    missingDataFlags: item.missing_data_flags.map(titleCase),
+    followUpStatus: item.follow_up_status,
+    followUpDetail: item.requires_human_review
+      ? "Human review required before closure"
+      : "Review according to local workflow"
+  };
+}
+
+function priorityFromRisk(riskLevel: RiskLevel, score: number) {
+  const basePriority: Record<RiskLevel, number> = {
+    urgent: 90,
+    high: 75,
+    moderate: 50,
+    low: 20
+  };
+
+  return Math.min(100, basePriority[riskLevel] + Math.round(score / 10));
+}
+
+function titleCase(value: string) {
+  return value
+    .replaceAll("_", " ")
+    .replaceAll("-", " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function formatDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleString();
 }

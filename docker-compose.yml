@@ -42,6 +42,8 @@ services:
       MINDMAP_CORS_ALLOW_ORIGINS: ${MINDMAP_CORS_ALLOW_ORIGINS:-http://localhost:3000}
       MINDMAP_LOG_LEVEL: ${MINDMAP_LOG_LEVEL:-INFO}
       MINDMAP_REQUEST_TIMEOUT_SECONDS: ${MINDMAP_REQUEST_TIMEOUT_SECONDS:-30}
+      MINDMAP_SEED_DEMO_DATA: ${MINDMAP_SEED_DEMO_DATA:-true}
+      MINDMAP_DEMO_DATA_PATH: ${MINDMAP_DEMO_DATA_PATH:-data/synthetic/demo-screenings.json}
     volumes:
       - ./app/backend:/workspace
       - ./data:/workspace/data

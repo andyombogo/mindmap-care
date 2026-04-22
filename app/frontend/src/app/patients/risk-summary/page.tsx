@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { RiskBadge } from "@/components/RiskBadge";
-import { getLatestRiskSummary, getRiskSummary } from "@/lib/api";
+import { formatApiError, getLatestRiskSummary, getRiskSummary } from "@/lib/api";
 import { samplePatientRiskSummary } from "@/lib/sample-data";
 import type { ApiPatientRiskSummary, PatientRiskSummary, RiskLevel } from "@/lib/types";
 
@@ -38,13 +38,13 @@ function PatientRiskSummaryContent() {
         setLoadState("ready");
         setMessage("Live mock inference result loaded from backend.");
       })
-      .catch(() => {
+      .catch((error) => {
         if (!isMounted) {
           return;
         }
         setPatient(samplePatientRiskSummary);
         setLoadState("fallback");
-        setMessage("Backend summary unavailable. Showing demo placeholder result.");
+        setMessage(`Backend summary unavailable: ${formatApiError(error)} Showing demo placeholder result.`);
       });
 
     return () => {

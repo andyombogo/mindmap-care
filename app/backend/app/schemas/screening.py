@@ -79,3 +79,24 @@ class PatientRiskSummaryResponse(BaseModel):
     data_quality_score: float = Field(ge=0, le=1)
     missing_fields: list[str]
     report_status: str
+
+
+class TriageQueueItem(BaseModel):
+    """Operational triage queue row for clinician worklists."""
+
+    screening_id: str
+    patient_reference_id: str | None
+    display_id: str
+    site_id: str
+    risk_category: Literal["low", "moderate", "high", "urgent"]
+    risk_score: float = Field(ge=0, le=100)
+    triage_priority: str
+    triage_window: str
+    referral_urgency: str
+    recommended_action: str
+    follow_up_status: Literal["overdue", "pending", "scheduled", "complete"]
+    missing_data_flags: list[str]
+    requires_human_review: bool
+    screened_at: str
+    owner: str
+    concern_summary: str

@@ -37,6 +37,7 @@ export type DashboardAlert = {
 };
 
 export type TriageItem = {
+  screeningId?: string;
   patientId: string;
   riskLevel: RiskLevel;
   score: number;
@@ -182,4 +183,23 @@ export type ApiDashboardSummary = {
   pending_follow_ups: number;
   completed_referrals: number;
   risk_distribution: Record<RiskLevel, number>;
+};
+
+export type ApiTriageQueueItem = {
+  screening_id: string;
+  patient_reference_id: string | null;
+  display_id: string;
+  site_id: string;
+  risk_category: RiskLevel;
+  risk_score: number;
+  triage_priority: string;
+  triage_window: string;
+  referral_urgency: string;
+  recommended_action: string;
+  follow_up_status: TriageItem["followUpStatus"];
+  missing_data_flags: string[];
+  requires_human_review: boolean;
+  screened_at: string;
+  owner: string;
+  concern_summary: string;
 };

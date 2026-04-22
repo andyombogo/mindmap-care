@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { StatCard } from "@/components/StatCard";
-import { getDashboardSummary } from "@/lib/api";
+import { formatApiError, getDashboardSummary } from "@/lib/api";
 import {
   dashboardAlerts,
   dashboardMetrics,
@@ -20,6 +20,7 @@ type LoadState = "loading" | "ready" | "fallback";
 export default function DashboardOverviewPage() {
   const [summary, setSummary] = useState<ApiDashboardSummary | null>(null);
   const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [loadMessage, setLoadMessage] = useState("Fetching dashboard summary from the FastAPI endpoint.");
 
   useEffect(() => {
     let isMounted = true;
@@ -31,13 +32,15 @@ export default function DashboardOverviewPage() {
         }
         setSummary(data);
         setLoadState("ready");
+        setLoadMessage("Dashboard totals are loaded from the FastAPI summary endpoint.");
       })
-      .catch(() => {
+      .catch((error) => {
         if (!isMounted) {
           return;
         }
         setSummary(null);
         setLoadState("fallback");
+        setLoadMessage(`Backend summary unavailable: ${formatApiError(error)} Showing placeholder operations data.`);
       });
 
     return () => {
@@ -69,11 +72,7 @@ export default function DashboardOverviewPage() {
               : "Demo fallback"}
         </strong>
         <span>
-          {loadState === "loading"
-            ? "Fetching dashboard summary from the FastAPI endpoint."
-            : loadState === "ready"
-            ? "Dashboard totals are loaded from the FastAPI summary endpoint."
-            : "Backend summary unavailable. Showing placeholder operations data."}
+          {loadMessage}
         </span>
       </div>
 

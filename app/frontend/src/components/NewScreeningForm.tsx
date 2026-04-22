@@ -3,7 +3,7 @@
 import type { ChangeEvent, FormEvent, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { submitScreening } from "@/lib/api";
+import { formatApiError, submitScreening } from "@/lib/api";
 import type { ScreeningSubmission } from "@/lib/types";
 
 type ScoreKey =
@@ -249,8 +249,8 @@ export function NewScreeningForm() {
       setStatus(`Submitted. Mock risk category: ${response.risk_category ?? "pending"}`);
       window.localStorage.setItem("mindmap-care-last-screening-id", response.screening_id);
       router.push(`/patients/risk-summary?screeningId=${response.screening_id}`);
-    } catch {
-      setStatus("Submission could not reach API. Draft kept locally.");
+    } catch (error) {
+      setStatus(`Submission not completed: ${formatApiError(error)} Draft kept locally.`);
       window.localStorage.setItem("mindmap-care-screening-draft", JSON.stringify(form));
     } finally {
       setIsSubmitting(false);

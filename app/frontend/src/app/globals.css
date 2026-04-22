@@ -326,6 +326,31 @@ textarea {
   gap: 1rem;
 }
 
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.trust-item {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  background: #fbfdfc;
+}
+
+.trust-item strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.trust-item p {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .dashboard-metric-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1205,6 +1230,7 @@ textarea {
 
   .metric-grid,
   .dashboard-metric-grid,
+  .trust-grid,
   .form-grid {
     grid-template-columns: 1fr;
   }

@@ -230,25 +230,26 @@ Commercial readiness will require:
 
 ## Current Stage
 
-MindMap Care is currently at the scaffold and product-definition stage.
+MindMap Care is currently an MVP prototype for pilot-readiness review.
 
 The repository includes:
 
 - production-minded monorepo structure
-- frontend and backend starter apps
+- Next.js workflow screens for screening intake, risk summaries, triage, and dashboard review
+- FastAPI endpoints for screening submission, mock inference, triage queue, and dashboard summaries
+- seeded synthetic demo data for reliable walkthroughs
 - Docker Compose local development setup
 - environment example files
-- documentation placeholders
+- practical product, clinical workflow, architecture, ethics, pilot, and model documentation
 - model, data, dashboard, deployment, and test directories
 
 Next priorities:
 
-- define the first MVP workflow
-- choose initial screening domains and input schema
-- draft safe-use and validation documentation
-- implement first scoring API contract
-- design the first triage result screen
-- add backend and frontend tests around the MVP workflow
+- review the MVP workflow with clinicians and programme leads
+- refine the first screening instrument and input schema
+- add persistence, authentication, audit logs, and role-based access
+- validate the mock rules against expert review before replacing them with any real model
+- prepare pilot training materials, incident processes, and data protection review
 
 ## Local Development
 
@@ -288,6 +289,8 @@ docker compose down
 ```
 
 Environment variables can be overridden in the root `.env` file. The most common local overrides are `FRONTEND_PORT`, `BACKEND_PORT`, `NEXT_PUBLIC_API_BASE_URL`, and `MINDMAP_CORS_ALLOW_ORIGINS`.
+
+The backend seeds fictional demo screenings by default so the dashboard, triage queue, and sample risk summaries are useful on first launch. Disable this with `MINDMAP_SEED_DEMO_DATA=false` or change the source with `MINDMAP_DEMO_DATA_PATH`.
 
 Run without Docker:
 

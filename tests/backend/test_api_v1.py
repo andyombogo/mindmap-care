@@ -106,3 +106,33 @@ def test_dashboard_summary_placeholder_returns_counts():
     assert response.status_code == 200
     assert response.json()["total_screenings"] == 1
     assert "medium_risk_cases" in response.json()
+
+
+def test_triage_queue_returns_prioritized_demo_items():
+    reset_demo_store()
+    client = TestClient(app)
+    client.post(
+        "/api/v1/screenings",
+        json={
+            "patient_reference_id": "MC-urgent",
+            "site_id": "clinic-001",
+            "screener_role": "nurse",
+            "consent_confirmed": True,
+            "responses": [
+                {
+                    "code": "mh-safety",
+                    "label": "Safety concern",
+                    "value": 3,
+                    "domain": "safety",
+                }
+            ],
+        },
+    )
+
+    response = client.get("/api/v1/screenings/triage-queue")
+
+    assert response.status_code == 200
+    queue = response.json()
+    assert queue[0]["risk_category"] == "urgent"
+    assert queue[0]["requires_human_review"] is True
+    assert queue[0]["screening_id"].startswith("scr-")

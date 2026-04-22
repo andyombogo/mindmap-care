@@ -4,10 +4,12 @@ from app.schemas.screening import (
     PatientRiskSummaryResponse,
     ScreeningSubmission,
     ScreeningSubmissionResponse,
+    TriageQueueItem,
 )
 from app.services.demo_store import (
     get_latest_risk_summary,
     get_risk_summary,
+    get_triage_queue,
     submit_screening_for_mock_inference,
 )
 
@@ -27,6 +29,12 @@ def latest_risk_summary() -> PatientRiskSummaryResponse:
     if summary is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No screening summaries yet.")
     return summary
+
+
+@router.get("/triage-queue", response_model=list[TriageQueueItem])
+def triage_queue() -> list[TriageQueueItem]:
+    """Return prioritized screening results for clinician review."""
+    return get_triage_queue()
 
 
 @router.get("/{screening_id}/risk-summary", response_model=PatientRiskSummaryResponse)

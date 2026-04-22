@@ -5,6 +5,7 @@ from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 from app.schemas.health import HealthResponse
+from app.services.demo_store import seed_demo_store_from_synthetic
 
 
 def create_app() -> FastAPI:
@@ -40,6 +41,10 @@ def create_app() -> FastAPI:
         )
 
     app.include_router(api_router, prefix=settings.api_v1_prefix)
+
+    if settings.seed_demo_data:
+        seed_demo_store_from_synthetic(settings.demo_data_path)
+
     return app
 
 

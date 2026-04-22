@@ -1,7 +1,9 @@
 from app.services.demo_store import (
     get_dashboard_summary,
     get_latest_risk_summary,
+    get_triage_queue,
     reset_demo_store,
+    seed_demo_store_from_synthetic,
     submit_screening_for_mock_inference,
 )
 from app.schemas.screening import ScreeningSubmission
@@ -57,3 +59,25 @@ def test_demo_store_dashboard_counts_submitted_screenings():
 
     assert dashboard.total_screenings == 1
     assert sum(dashboard.risk_distribution.values()) == 1
+
+
+def test_demo_store_seeds_synthetic_records_for_walkthroughs():
+    reset_demo_store()
+
+    seeded_count = seed_demo_store_from_synthetic()
+    dashboard = get_dashboard_summary()
+    queue = get_triage_queue()
+
+    assert seeded_count == 12
+    assert dashboard.total_screenings == 12
+    assert dashboard.urgent_referrals >= 1
+    assert len(queue) == 12
+    assert queue[0].risk_category in {"urgent", "high"}
+
+
+def test_demo_store_seed_is_idempotent():
+    reset_demo_store()
+
+    assert seed_demo_store_from_synthetic() == 12
+    assert seed_demo_store_from_synthetic() == 0
+    assert get_dashboard_summary().total_screenings == 12

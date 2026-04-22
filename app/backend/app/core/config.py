@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     cors_allow_origins: str = "http://localhost:3000"
     log_level: str = "INFO"
     request_timeout_seconds: int = Field(default=30, ge=1)
+    seed_demo_data: bool = True
+    demo_data_path: str = "data/synthetic/demo-screenings.json"
 
     model_config = SettingsConfigDict(
         env_file=".env",
