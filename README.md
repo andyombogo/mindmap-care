@@ -258,17 +258,16 @@ Prerequisites:
 - Python 3.11+
 - Docker Desktop, optional but recommended
 
-Configure environment files:
+For Docker-based local development, copy the root environment template:
 
 ```powershell
 Copy-Item .env.example .env
-Copy-Item app\frontend\.env.example app\frontend\.env.local
-Copy-Item app\backend\.env.example app\backend\.env
 ```
 
 Run with Docker Compose:
 
 ```powershell
+Copy-Item .env.example .env
 docker compose up --build
 ```
 
@@ -277,8 +276,27 @@ Default local services:
 - Frontend: http://localhost:3000
 - Backend: http://localhost:8000
 - Backend health check: http://localhost:8000/health
+- Backend API docs: http://localhost:8000/docs
+
+Useful Docker commands:
+
+```powershell
+docker compose ps
+docker compose logs -f backend
+docker compose logs -f frontend
+docker compose down
+```
+
+Environment variables can be overridden in the root `.env` file. The most common local overrides are `FRONTEND_PORT`, `BACKEND_PORT`, `NEXT_PUBLIC_API_BASE_URL`, and `MINDMAP_CORS_ALLOW_ORIGINS`.
 
 Run without Docker:
+
+For direct local development, copy the service-specific environment templates:
+
+```powershell
+Copy-Item app\frontend\.env.example app\frontend\.env.local
+Copy-Item app\backend\.env.example app\backend\.env
+```
 
 ```powershell
 cd app\backend

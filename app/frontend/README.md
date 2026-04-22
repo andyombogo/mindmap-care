@@ -33,3 +33,24 @@ npm run dev
 ```
 
 The app expects `NEXT_PUBLIC_API_BASE_URL` to point at the backend API.
+
+## Docker
+
+From the repository root:
+
+```powershell
+Copy-Item .env.example .env
+docker compose up --build frontend
+```
+
+The frontend container runs the Next.js development server on port `3000` by default. Override `FRONTEND_PORT` or `NEXT_PUBLIC_API_BASE_URL` in the root `.env` file when needed.
+
+## Tests
+
+Run lightweight component tests with Vitest and React Testing Library:
+
+```powershell
+npm run test
+```
+
+The current tests focus on reusable clinical UI render checks and the screening intake form shell.

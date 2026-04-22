@@ -1,0 +1,362 @@
+[
+  {
+    "screening_id": "demo-scr-001",
+    "patient_reference_id": "DEMO-001",
+    "site_id": "kisumu-outreach-clinic",
+    "screener_role": "nurse",
+    "age_years": 42,
+    "sex": "female",
+    "screening_datetime": "2026-04-22T08:15:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["persistent low mood", "safety concern", "limited family support"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 3 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 2 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 3 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 1 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 1 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 2 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 1 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 2 }
+    ],
+    "notes": "Fictional urgent-review example for demo workflow. Same-day clinician review should be shown in the UI.",
+    "safety_flags": ["mh-safety"],
+    "metadata": {
+      "demo_use": "triage_queue",
+      "expected_category": "urgent",
+      "follow_up_status": "pending",
+      "referral_urgency": "same_day_review"
+    }
+  },
+  {
+    "screening_id": "demo-scr-002",
+    "patient_reference_id": "DEMO-002",
+    "site_id": "nairobi-primary-care",
+    "screener_role": "clinician",
+    "age_years": 68,
+    "sex": "male",
+    "screening_datetime": "2026-04-22T08:40:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["memory concern", "functional decline", "missed appointments"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 1 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 1 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 3 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 2 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 2 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 2 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 1 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 1 }
+    ],
+    "notes": "Fictional cognitive and functional review example. No real patient information.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "risk_summary",
+      "expected_category": "high",
+      "follow_up_status": "scheduled",
+      "referral_urgency": "priority_referral"
+    }
+  },
+  {
+    "screening_id": "demo-scr-003",
+    "patient_reference_id": "DEMO-003",
+    "site_id": "eldoret-county-clinic",
+    "screener_role": "community_health_worker",
+    "age_years": 31,
+    "sex": "female",
+    "screening_datetime": "2026-04-22T09:05:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["low mood", "caregiving stress", "follow-up barrier"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 2 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 2 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 1 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 1 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 2 }
+    ],
+    "notes": "Fictional moderate-risk example with social follow-up barrier.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "dashboard_metrics",
+      "expected_category": "moderate",
+      "follow_up_status": "overdue",
+      "referral_urgency": "routine_follow_up"
+    }
+  },
+  {
+    "screening_id": "demo-scr-004",
+    "patient_reference_id": "DEMO-004",
+    "site_id": "mombasa-clinic",
+    "screener_role": "nurse",
+    "age_years": 24,
+    "sex": "male",
+    "screening_datetime": "2026-04-22T09:20:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["routine screening", "sleep disruption"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 1 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 1 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 0 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 0 }
+    ],
+    "notes": "Fictional low-risk example for dashboard distribution.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "screening_form_example",
+      "expected_category": "low",
+      "follow_up_status": "complete",
+      "referral_urgency": "routine_guidance"
+    }
+  },
+  {
+    "screening_id": "demo-scr-005",
+    "patient_reference_id": "DEMO-005",
+    "site_id": "nakuru-primary-care",
+    "screener_role": "clinician",
+    "age_years": 57,
+    "sex": "female",
+    "screening_datetime": "2026-04-22T09:35:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["memory concern", "low mood", "daily activity difficulty"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 2 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 1 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 2 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 1 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 2 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 2 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 1 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 1 }
+    ],
+    "notes": "Fictional high-priority review example for triage queue.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "triage_queue",
+      "expected_category": "high",
+      "follow_up_status": "pending",
+      "referral_urgency": "priority_referral"
+    }
+  },
+  {
+    "screening_id": "demo-scr-006",
+    "patient_reference_id": "DEMO-006",
+    "site_id": "kisumu-outreach-clinic",
+    "screener_role": "community_health_worker",
+    "age_years": 39,
+    "sex": "unknown",
+    "screening_datetime": "2026-04-22T10:05:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["anxiety", "incomplete demographic information"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 1 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 3 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 1 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 1 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 1 }
+    ],
+    "notes": "Fictional example with unknown sex to exercise missing-field indicators.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "missing_data_flags",
+      "expected_category": "moderate",
+      "follow_up_status": "scheduled",
+      "referral_urgency": "non_urgent_review"
+    }
+  },
+  {
+    "screening_id": "demo-scr-007",
+    "patient_reference_id": "DEMO-007",
+    "site_id": "eldoret-county-clinic",
+    "screener_role": "nurse",
+    "age_years": 73,
+    "sex": "female",
+    "screening_datetime": "2026-04-22T10:25:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["mobility difficulty", "memory concern", "caregiver unavailable"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 1 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 1 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 2 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 2 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 1 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 3 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 2 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 2 }
+    ],
+    "notes": "Fictional older adult functional-risk example for programme dashboard.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "dashboard_metrics",
+      "expected_category": "high",
+      "follow_up_status": "pending",
+      "referral_urgency": "priority_referral"
+    }
+  },
+  {
+    "screening_id": "demo-scr-008",
+    "patient_reference_id": "DEMO-008",
+    "site_id": "mombasa-clinic",
+    "screener_role": "other",
+    "age_years": 46,
+    "sex": "male",
+    "screening_datetime": "2026-04-22T10:45:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["routine chronic care visit", "mild worry"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 0 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 1 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 0 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 0 }
+    ],
+    "notes": "Fictional low-risk record for screening form and dashboard examples.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "screening_form_example",
+      "expected_category": "low",
+      "follow_up_status": "complete",
+      "referral_urgency": "routine_guidance"
+    }
+  },
+  {
+    "screening_id": "demo-scr-009",
+    "patient_reference_id": "DEMO-009",
+    "site_id": "nairobi-primary-care",
+    "screener_role": "nurse",
+    "age_years": 52,
+    "sex": "female",
+    "screening_datetime": "2026-04-22T11:10:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["distress", "recent bereavement", "poor sleep"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 3 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 2 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 1 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 1 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 2 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 1 }
+    ],
+    "notes": "Fictional high emotional-distress record without urgent safety flag.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "triage_queue",
+      "expected_category": "high",
+      "follow_up_status": "pending",
+      "referral_urgency": "priority_referral"
+    }
+  },
+  {
+    "screening_id": "demo-scr-010",
+    "patient_reference_id": "DEMO-010",
+    "site_id": "nakuru-primary-care",
+    "screener_role": "researcher",
+    "age_years": 61,
+    "sex": "intersex",
+    "screening_datetime": "2026-04-22T11:35:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["screening study visit", "mild functional concern"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 1 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 0 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 1 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 0 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 1 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 1 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 0 }
+    ],
+    "notes": "Fictional moderate-to-low study-screening example.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "dashboard_metrics",
+      "expected_category": "moderate",
+      "follow_up_status": "scheduled",
+      "referral_urgency": "non_urgent_review"
+    }
+  },
+  {
+    "screening_id": "demo-scr-011",
+    "patient_reference_id": "DEMO-011",
+    "site_id": "kisumu-outreach-clinic",
+    "screener_role": "community_health_worker",
+    "age_years": 28,
+    "sex": "female",
+    "screening_datetime": "2026-04-22T12:05:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["postpartum worry", "limited transport for follow-up"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 2 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 3 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 1 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 1 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 2 }
+    ],
+    "notes": "Fictional community follow-up example for triage queue demos.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "triage_queue",
+      "expected_category": "moderate",
+      "follow_up_status": "overdue",
+      "referral_urgency": "routine_follow_up"
+    }
+  },
+  {
+    "screening_id": "demo-scr-012",
+    "patient_reference_id": "DEMO-012",
+    "site_id": "mombasa-clinic",
+    "screener_role": "clinician",
+    "age_years": 49,
+    "sex": "male",
+    "screening_datetime": "2026-04-22T12:30:00+03:00",
+    "consent_confirmed": true,
+    "presenting_concerns": ["routine review", "stable function"],
+    "responses": [
+      { "code": "mh-mood", "label": "Low mood or emotional distress", "domain": "mental_health", "value": 0 },
+      { "code": "mh-anxiety", "label": "Anxiety, worry, or agitation", "domain": "mental_health", "value": 0 },
+      { "code": "mh-safety", "label": "Safety concern or self-harm risk", "domain": "safety", "value": 0 },
+      { "code": "cg-memory", "label": "Memory concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-orientation", "label": "Orientation or confusion concern", "domain": "cognition", "value": 0 },
+      { "code": "cg-attention", "label": "Attention or concentration concern", "domain": "cognition", "value": 0 },
+      { "code": "fn-daily", "label": "Daily living difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-mobility", "label": "Mobility or self-care difficulty", "domain": "function", "value": 0 },
+      { "code": "fn-support", "label": "Limited support or follow-up barrier", "domain": "function", "value": 0 }
+    ],
+    "notes": "Fictional low-risk stable record.",
+    "safety_flags": [],
+    "metadata": {
+      "demo_use": "dashboard_metrics",
+      "expected_category": "low",
+      "follow_up_status": "complete",
+      "referral_urgency": "routine_guidance"
+    }
+  }
+]

@@ -39,6 +39,17 @@ The API will be available at:
 - API docs: http://localhost:8000/docs
 - Versioned health check: http://localhost:8000/api/v1/health
 
+## Docker
+
+From the repository root:
+
+```powershell
+Copy-Item .env.example .env
+docker compose up --build backend
+```
+
+The backend container runs with reload enabled through `docker-compose.yml` and exposes port `8000` by default. Override `BACKEND_PORT` or `MINDMAP_*` settings in the root `.env` file when needed.
+
 ## Environment Variables
 
 Copy `.env.example` to `.env` for local overrides:

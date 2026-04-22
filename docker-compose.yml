@@ -1,21 +1,30 @@
 services:
-  # Frontend service: Next.js app for clinicians, care coordinators, or admins.
+  # Frontend service: Next.js app for clinicians, care coordinators, and programme leads.
   frontend:
     build:
       context: ./app/frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
-    env_file:
-      - ./app/frontend/.env.example
+      - "${FRONTEND_PORT:-3000}:3000"
     environment:
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+      NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-MindMap Care}
+      # Browser-facing URL. Keep localhost for local demos because users access
+      # the backend through the host machine, not the Docker network name.
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+      NEXT_TELEMETRY_DISABLED: "1"
     volumes:
       - ./app/frontend:/workspace
       - frontend_node_modules:/workspace/node_modules
     depends_on:
-      - backend
-    command: npm run dev -- --hostname 0.0.0.0
+      backend:
+        condition: service_healthy
+    command: ["npm", "run", "dev", "--", "--hostname", "0.0.0.0"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   # Backend service: FastAPI API for care workflows, risk services, and integrations.
   backend:
@@ -23,14 +32,27 @@ services:
       context: ./app/backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
-    env_file:
-      - ./app/backend/.env.example
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      MINDMAP_ENVIRONMENT: ${MINDMAP_ENVIRONMENT:-local}
+      MINDMAP_APP_NAME: ${MINDMAP_APP_NAME:-MindMap Care API}
+      MINDMAP_APP_VERSION: ${MINDMAP_APP_VERSION:-0.1.0}
+      MINDMAP_SERVICE_NAME: ${MINDMAP_SERVICE_NAME:-mindmap-care-backend}
+      MINDMAP_API_V1_PREFIX: ${MINDMAP_API_V1_PREFIX:-/api/v1}
+      MINDMAP_CORS_ALLOW_ORIGINS: ${MINDMAP_CORS_ALLOW_ORIGINS:-http://localhost:3000}
+      MINDMAP_LOG_LEVEL: ${MINDMAP_LOG_LEVEL:-INFO}
+      MINDMAP_REQUEST_TIMEOUT_SECONDS: ${MINDMAP_REQUEST_TIMEOUT_SECONDS:-30}
     volumes:
       - ./app/backend:/workspace
       - ./data:/workspace/data
       - ./models:/workspace/models
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
 volumes:
   # Keeps container-installed node modules separate from the bind-mounted source tree.

@@ -1,6 +1,8 @@
 # Lightweight development image for the Next.js frontend.
 FROM node:20-alpine
 
+ENV NEXT_TELEMETRY_DISABLED=1
+
 WORKDIR /workspace
 
 COPY package*.json ./
