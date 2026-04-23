@@ -164,6 +164,10 @@ export type ApiPatientRiskSummary = {
   requires_human_review: boolean;
   triage_priority: string;
   triage_window: string;
+  review_status: string;
+  assigned_to: string;
+  last_reviewed_at: string | null;
+  last_reviewed_by: string | null;
   summary: string;
   explanation_text: string;
   contributing_factors: ApiRiskSummaryFactor[];
@@ -204,4 +208,40 @@ export type ApiTriageQueueItem = {
   screened_at: string;
   owner: string;
   concern_summary: string;
+};
+
+export type ApiScreeningReviewRequest = {
+  actor: string;
+  decision:
+    | "confirm_current_triage"
+    | "escalate_urgency"
+    | "reduce_urgency"
+    | "hold_for_more_context";
+  assigned_to: string;
+  note?: string;
+};
+
+export type ApiAuditEvent = {
+  event_id: string;
+  screening_id: string;
+  event_type:
+    | "screening_submitted"
+    | "risk_scored"
+    | "summary_viewed"
+    | "review_saved"
+    | "override_recorded"
+    | "report_exported";
+  actor: string;
+  occurred_at: string;
+  detail: string;
+  metadata: Record<string, string | number | boolean | null>;
+};
+
+export type ApiScreeningReviewResponse = {
+  screening_id: string;
+  review_status: string;
+  assigned_to: string;
+  note: string | null;
+  audit_event: ApiAuditEvent;
+  summary: ApiPatientRiskSummary;
 };

@@ -1,4 +1,6 @@
 import type {
+  ApiScreeningReviewRequest,
+  ApiScreeningReviewResponse,
   ApiDashboardSummary,
   ApiPatientRiskSummary,
   ApiTriageQueueItem,
@@ -93,6 +95,16 @@ export function getLatestRiskSummary() {
 
 export function getRiskSummary(screeningId: string) {
   return fetchJson<ApiPatientRiskSummary>(`/api/v1/screenings/${screeningId}/risk-summary`);
+}
+
+export function saveScreeningReview(
+  screeningId: string,
+  payload: ApiScreeningReviewRequest
+) {
+  return fetchJson<ApiScreeningReviewResponse>(`/api/v1/screenings/${screeningId}/review`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
 }
 
 export function getDashboardSummary() {

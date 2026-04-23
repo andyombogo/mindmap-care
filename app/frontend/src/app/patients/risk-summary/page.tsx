@@ -8,17 +8,18 @@ import {
   ApiRequestError,
   formatApiError,
   getLatestRiskSummary,
-  getRiskSummary
+  getRiskSummary,
+  saveScreeningReview
 } from "@/lib/api";
 import { samplePatientRiskSummary } from "@/lib/sample-data";
 import type { ApiPatientRiskSummary, PatientRiskSummary, RiskLevel } from "@/lib/types";
 
 type LoadState = "loading" | "ready" | "fallback" | "empty" | "notFound";
 type ReviewDecision =
-  | "Confirm current triage"
-  | "Escalate urgency"
-  | "Reduce urgency"
-  | "Hold for more context";
+  | "confirm_current_triage"
+  | "escalate_urgency"
+  | "reduce_urgency"
+  | "hold_for_more_context";
 
 export default function PatientRiskSummaryPage() {
   return (
@@ -34,10 +35,11 @@ function PatientRiskSummaryContent() {
   const [patient, setPatient] = useState<PatientRiskSummary | null>(samplePatientRiskSummary);
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [message, setMessage] = useState("Loading risk summary from backend.");
-  const [reviewDecision, setReviewDecision] = useState<ReviewDecision>("Confirm current triage");
+  const [reviewDecision, setReviewDecision] = useState<ReviewDecision>("confirm_current_triage");
   const [reviewOwner, setReviewOwner] = useState(samplePatientRiskSummary.assignedTo);
   const [reviewNote, setReviewNote] = useState("");
   const [reviewDraftMessage, setReviewDraftMessage] = useState("");
+  const [isSavingReview, setIsSavingReview] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -82,10 +84,9 @@ function PatientRiskSummaryContent() {
     if (!patient) {
       return;
     }
-    setReviewDecision(patient.requiresHumanReview ? "Confirm current triage" : "Hold for more context");
+    setReviewDecision(patient.requiresHumanReview ? "confirm_current_triage" : "hold_for_more_context");
     setReviewOwner(patient.assignedTo);
     setReviewNote("");
-    setReviewDraftMessage("");
   }, [patient]);
 
   const patientAge = useMemo(
@@ -122,6 +123,41 @@ function PatientRiskSummaryContent() {
         />
       </main>
     );
+  }
+
+  async function persistReview(mode: "note" | "reviewed") {
+    const currentPatient = patient;
+    if (!currentPatient) {
+      return;
+    }
+    if (loadState !== "ready") {
+      setReviewDraftMessage(
+        mode === "note"
+          ? "Review note captured for this session."
+          : `Marked for ${reviewDecisionLabel(reviewDecision).toLowerCase()} with ${reviewOwner || "an assigned reviewer"}.`
+      );
+      return;
+    }
+
+    setIsSavingReview(true);
+    try {
+      const response = await saveScreeningReview(currentPatient.audit.screeningId, {
+        actor: reviewOwner || "Clinical review queue",
+        decision: reviewDecision,
+        assigned_to: reviewOwner || "Clinical review queue",
+        note: reviewNote || undefined,
+      });
+      setPatient(mapApiSummaryToPatient(response.summary));
+      setReviewDraftMessage(
+        mode === "note"
+          ? "Review note saved to the backend audit trail."
+          : response.audit_event.detail
+      );
+    } catch (error) {
+      setReviewDraftMessage(`Could not save the review action: ${formatApiError(error)}`);
+    } finally {
+      setIsSavingReview(false);
+    }
   }
 
   return (
@@ -252,10 +288,10 @@ function PatientRiskSummaryContent() {
               onChange={(event) => setReviewDecision(event.target.value as ReviewDecision)}
               value={reviewDecision}
             >
-              <option value="Confirm current triage">Confirm current triage</option>
-              <option value="Escalate urgency">Escalate urgency</option>
-              <option value="Reduce urgency">Reduce urgency</option>
-              <option value="Hold for more context">Hold for more context</option>
+              <option value="confirm_current_triage">Confirm current triage</option>
+              <option value="escalate_urgency">Escalate urgency</option>
+              <option value="reduce_urgency">Reduce urgency</option>
+              <option value="hold_for_more_context">Hold for more context</option>
             </select>
           </div>
 
@@ -282,28 +318,26 @@ function PatientRiskSummaryContent() {
           <div className="action-row">
             <button
               className="button secondary"
-              onClick={() => setReviewDraftMessage("Review note captured for this session.")}
+              disabled={isSavingReview}
+              onClick={() => void persistReview("note")}
               type="button"
             >
-              Save review note
+              {isSavingReview ? "Saving..." : "Save review note"}
             </button>
             <button
               className="button primary"
-              onClick={() =>
-                setReviewDraftMessage(
-                  `Marked for ${reviewDecision.toLowerCase()} with ${reviewOwner || "an assigned reviewer"}.`
-                )
-              }
+              disabled={isSavingReview}
+              onClick={() => void persistReview("reviewed")}
               type="button"
             >
-              Mark reviewed
+              {isSavingReview ? "Saving..." : "Mark reviewed"}
             </button>
           </div>
 
           <div className="summary-list compact review-draft-summary">
             <div className="summary-item">
               <span>Selected decision</span>
-              <strong>{reviewDecision}</strong>
+              <strong>{reviewDecisionLabel(reviewDecision)}</strong>
             </div>
             <div className="summary-item">
               <span>Handoff owner</span>
@@ -442,8 +476,8 @@ function mapApiSummaryToPatient(summary: ApiPatientRiskSummary): PatientRiskSumm
     actionRationale: summary.explanation_text,
     triagePriority: summary.triage_priority,
     triageWindow: summary.triage_window,
-    reviewStatus: summary.requires_human_review ? "Awaiting clinician review" : "Review optional",
-    assignedTo: summary.requires_human_review ? "Clinical review queue" : "Facility team",
+    reviewStatus: summary.review_status,
+    assignedTo: summary.assigned_to,
     requiresHumanReview: summary.requires_human_review,
     missingFields: summary.missing_fields.map(titleCase),
     site: summary.site_id,
@@ -458,8 +492,8 @@ function mapApiSummaryToPatient(summary: ApiPatientRiskSummary): PatientRiskSumm
       riskScoreId: summary.risk_score_id,
       generatedAt: formatDate(summary.generated_at),
       generatedBy: summary.model_id,
-      lastReviewedAt: "Not yet reviewed",
-      lastReviewedBy: "Pending clinician"
+      lastReviewedAt: summary.last_reviewed_at ? formatDate(summary.last_reviewed_at) : "Not yet reviewed",
+      lastReviewedBy: summary.last_reviewed_by ?? "Pending clinician"
     },
     explanation: {
       headline: `${titleCase(summary.risk_category)} screening risk requiring ${summary.triage_window.toLowerCase()}.`,
@@ -487,4 +521,14 @@ function formatDate(value: string) {
     return value;
   }
   return date.toLocaleString();
+}
+
+function reviewDecisionLabel(value: ReviewDecision) {
+  const labels: Record<ReviewDecision, string> = {
+    confirm_current_triage: "Confirm current triage",
+    escalate_urgency: "Escalate urgency",
+    reduce_urgency: "Reduce urgency",
+    hold_for_more_context: "Hold for more context",
+  };
+  return labels[value];
 }

@@ -9,8 +9,11 @@ from app.core.config import get_settings
 from app.modeling import MockRiskInferenceEngine, ScreeningInput
 from app.schemas.dashboard import DashboardSummary
 from app.schemas.screening import (
+    AuditEventResponse,
     PatientRiskSummaryResponse,
     RiskSummaryFactor,
+    ScreeningReviewRequest,
+    ScreeningReviewResponse,
     ScreeningSubmission,
     ScreeningSubmissionResponse,
     TriageQueueItem,
@@ -20,6 +23,7 @@ MOCK_ENGINE = MockRiskInferenceEngine()
 
 _risk_summaries: dict[str, PatientRiskSummaryResponse] = {}
 _screening_inputs: dict[str, ScreeningInput] = {}
+_audit_events: dict[str, list[AuditEventResponse]] = {}
 _latest_screening_id: str | None = None
 _seed_loaded = False
 
@@ -103,6 +107,28 @@ def _run_and_store_screening(screening_input: ScreeningInput):
     screening_id = features.screening_id
     _risk_summaries[screening_id] = summary
     _screening_inputs[screening_id] = screening_input
+    _audit_events.setdefault(screening_id, [])
+    _record_audit_event(
+        screening_id,
+        "screening_submitted",
+        actor=screening_input.screener_role.value,
+        detail="Screening submission accepted into the MVP workflow.",
+        metadata={
+            "site_id": screening_input.site_id,
+            "response_count": len(screening_input.responses),
+        },
+    )
+    _record_audit_event(
+        screening_id,
+        "risk_scored",
+        actor="mindmap_mock_engine",
+        detail="Deterministic mock risk scoring completed for the submitted screening.",
+        metadata={
+            "risk_category": summary.risk_category,
+            "risk_score": round(summary.score, 2),
+            "requires_human_review": summary.requires_human_review,
+        },
+    )
     _latest_screening_id = screening_id
 
     return summary, prediction
@@ -161,11 +187,75 @@ def get_triage_queue() -> list[TriageQueueItem]:
     return sorted(items, key=_triage_sort_value, reverse=True)
 
 
+def record_summary_view(screening_id: str, actor: str = "api_client") -> AuditEventResponse | None:
+    """Persist an audit event when a risk summary is opened for review."""
+    if screening_id not in _risk_summaries:
+        return None
+    return _record_audit_event(
+        screening_id,
+        "summary_viewed",
+        actor=actor,
+        detail="Patient risk summary opened for review.",
+        metadata={"view_source": "api"},
+    )
+
+
+def list_audit_events(screening_id: str) -> list[AuditEventResponse] | None:
+    """Return stored audit events for one screening record."""
+    if screening_id not in _risk_summaries:
+        return None
+    return list(_audit_events.get(screening_id, []))
+
+
+def save_screening_review(
+    screening_id: str,
+    payload: ScreeningReviewRequest,
+) -> ScreeningReviewResponse | None:
+    """Capture a clinician review or override decision and append an audit event."""
+    summary = _risk_summaries.get(screening_id)
+    if summary is None:
+        return None
+
+    reviewed_at = datetime.now(timezone.utc).isoformat()
+    review_status = _review_status_label(payload.decision)
+    updated_summary = summary.model_copy(
+        update={
+            "review_status": review_status,
+            "assigned_to": payload.assigned_to,
+            "last_reviewed_at": reviewed_at,
+            "last_reviewed_by": payload.actor,
+        }
+    )
+    _risk_summaries[screening_id] = updated_summary
+
+    audit_event = _record_audit_event(
+        screening_id,
+        "review_saved" if payload.decision == "confirm_current_triage" else "override_recorded",
+        actor=payload.actor,
+        detail=_review_detail(payload.decision, payload.assigned_to),
+        metadata={
+            "decision": payload.decision,
+            "assigned_to": payload.assigned_to,
+            "note_present": bool(str(payload.note or "").strip()),
+        },
+    )
+
+    return ScreeningReviewResponse(
+        screening_id=screening_id,
+        review_status=review_status,
+        assigned_to=payload.assigned_to,
+        note=payload.note,
+        audit_event=audit_event,
+        summary=updated_summary,
+    )
+
+
 def reset_demo_store() -> None:
     """Clear in-memory state for tests."""
     global _latest_screening_id, _seed_loaded
     _risk_summaries.clear()
     _screening_inputs.clear()
+    _audit_events.clear()
     _latest_screening_id = None
     _seed_loaded = False
 
@@ -195,6 +285,8 @@ def _build_patient_risk_summary(
         requires_human_review=prediction.requires_human_review,
         triage_priority=_triage_priority(category),
         triage_window=_triage_window(category),
+        review_status="Awaiting clinician review" if prediction.requires_human_review else "Review optional",
+        assigned_to="Clinical review queue" if prediction.requires_human_review else "Facility team",
         summary=prediction.explanation.summary,
         explanation_text=prediction.explanation.summary,
         contributing_factors=[
@@ -315,3 +407,44 @@ def _resolve_demo_data_path(path: str | Path) -> Path | None:
             return possible_path
 
     return None
+
+
+def _record_audit_event(
+    screening_id: str,
+    event_type: str,
+    *,
+    actor: str,
+    detail: str,
+    metadata: dict[str, str | int | float | bool | None] | None = None,
+) -> AuditEventResponse:
+    event = AuditEventResponse(
+        event_id=f"audit-{uuid4()}",
+        screening_id=screening_id,
+        event_type=event_type,
+        actor=actor,
+        occurred_at=datetime.now(timezone.utc).isoformat(),
+        detail=detail,
+        metadata=metadata or {},
+    )
+    _audit_events.setdefault(screening_id, []).insert(0, event)
+    return event
+
+
+def _review_status_label(decision: str) -> str:
+    labels = {
+        "confirm_current_triage": "Clinician reviewed",
+        "escalate_urgency": "Urgency escalated by clinician",
+        "reduce_urgency": "Urgency reduced by clinician",
+        "hold_for_more_context": "Held for more context",
+    }
+    return labels[decision]
+
+
+def _review_detail(decision: str, assigned_to: str) -> str:
+    labels = {
+        "confirm_current_triage": "Clinician confirmed the current triage recommendation.",
+        "escalate_urgency": "Clinician escalated the triage urgency.",
+        "reduce_urgency": "Clinician reduced the triage urgency.",
+        "hold_for_more_context": "Clinician held the case for more context before closing the loop.",
+    }
+    return f"{labels[decision]} Assigned to {assigned_to}."

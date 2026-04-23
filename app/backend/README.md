@@ -80,8 +80,10 @@ By default, the service loads `data/synthetic/demo-screenings.json` into the in-
 - `GET /api/v1/screenings/triage-queue` returns prioritized demo queue items.
 - `GET /api/v1/screenings/risk-summary/latest` returns the newest stored risk summary.
 - `GET /api/v1/screenings/{screening_id}/risk-summary` returns one stored risk summary.
+- `GET /api/v1/screenings/{screening_id}/audit-events` returns the in-memory audit trail for that screening.
+- `POST /api/v1/screenings/{screening_id}/review` saves a clinician review or override decision.
 - `POST /api/v1/risk/score` returns deterministic placeholder risk scoring.
 - `POST /api/v1/explainability` returns a plain-language explanation payload.
 - `GET /api/v1/dashboard/summary` returns dashboard summary totals.
 
-These endpoints are intentionally simple. They define stable API contracts that can later be connected to persistence, validated models, audit logging, authentication, and deployment-specific integrations. The current inference logic is a deterministic mock and must not be treated as clinical evidence.
+These endpoints are intentionally simple. They define stable API contracts that can later be connected to persistence, validated models, fuller audit retrieval, authentication, and deployment-specific integrations. The current inference logic is a deterministic mock and must not be treated as clinical evidence.

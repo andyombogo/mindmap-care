@@ -2,6 +2,22 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+AuditEventType = Literal[
+    "screening_submitted",
+    "risk_scored",
+    "summary_viewed",
+    "review_saved",
+    "override_recorded",
+    "report_exported",
+]
+
+ReviewDecision = Literal[
+    "confirm_current_triage",
+    "escalate_urgency",
+    "reduce_urgency",
+    "hold_for_more_context",
+]
+
 
 class ScreeningResponseItem(BaseModel):
     """Single screening question response."""
@@ -69,6 +85,10 @@ class PatientRiskSummaryResponse(BaseModel):
     requires_human_review: bool
     triage_priority: str
     triage_window: str
+    review_status: str
+    assigned_to: str
+    last_reviewed_at: str | None = None
+    last_reviewed_by: str | None = None
     summary: str
     explanation_text: str
     contributing_factors: list[RiskSummaryFactor]
@@ -100,3 +120,35 @@ class TriageQueueItem(BaseModel):
     screened_at: str
     owner: str
     concern_summary: str
+
+
+class AuditEventResponse(BaseModel):
+    """Structured audit event for key screening workflow actions."""
+
+    event_id: str
+    screening_id: str
+    event_type: AuditEventType
+    actor: str
+    occurred_at: str
+    detail: str
+    metadata: dict[str, str | int | float | bool | None] = Field(default_factory=dict)
+
+
+class ScreeningReviewRequest(BaseModel):
+    """Clinician review or override captured after a risk summary is inspected."""
+
+    actor: str = Field(min_length=1)
+    decision: ReviewDecision
+    assigned_to: str = Field(min_length=1)
+    note: str | None = None
+
+
+class ScreeningReviewResponse(BaseModel):
+    """Result returned after saving a clinician review decision."""
+
+    screening_id: str
+    review_status: str
+    assigned_to: str
+    note: str | None = None
+    audit_event: AuditEventResponse
+    summary: PatientRiskSummaryResponse
