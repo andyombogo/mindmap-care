@@ -77,6 +77,8 @@ export type PatientRiskSummary = {
   triageWindow: string;
   reviewStatus: string;
   assignedTo: string;
+  requiresHumanReview: boolean;
+  missingFields: string[];
   site: string;
   screener: string;
   screenedAt: string;

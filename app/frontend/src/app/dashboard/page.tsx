@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { StatCard } from "@/components/StatCard";
+import { WorkflowEmptyState } from "@/components/WorkflowEmptyState";
 import { formatApiError, getDashboardSummary } from "@/lib/api";
 import {
   dashboardAlerts,
@@ -48,6 +49,7 @@ export default function DashboardOverviewPage() {
     };
   }, []);
 
+  const hasRecordedScreenings = Boolean(summary && summary.total_screenings > 0);
   const metrics = useMemo(() => buildDashboardMetrics(summary), [summary]);
   const riskMix = useMemo(
     () =>
@@ -103,54 +105,79 @@ export default function DashboardOverviewPage() {
             </div>
             <span className="status-pill">7 days</span>
           </div>
-          <div className="bar-chart" aria-label="Seven day screening trend">
-            {dashboardTrend.map((row) => (
-              <div className="bar-row" key={row.day}>
-                <span>{row.day}</span>
-                <progress
-                  aria-label={`${row.screenings} screenings on ${row.day}`}
-                  className="bar-track"
-                  max={maxScreenings}
-                  value={row.screenings}
-                />
-                <strong>{row.screenings}</strong>
-              </div>
-            ))}
-          </div>
+          {loadState === "ready" && !hasRecordedScreenings ? (
+            <WorkflowEmptyState
+              title="No submitted screenings yet"
+              description="The backend is connected, but there are no completed screenings to summarize for this site view."
+              actions={[
+                "Submit the first screening from the intake page to start the dashboard trend.",
+                "Confirm whether demo seeding is disabled in the backend environment.",
+                "Use this screen to verify that the API is reachable before pilot walkthroughs."
+              ]}
+            />
+          ) : (
+            <div className="bar-chart" aria-label="Seven day screening trend">
+              {dashboardTrend.map((row) => (
+                <div className="bar-row" key={row.day}>
+                  <span>{row.day}</span>
+                  <progress
+                    aria-label={`${row.screenings} screenings on ${row.day}`}
+                    className="bar-track"
+                    max={maxScreenings}
+                    value={row.screenings}
+                  />
+                  <strong>{row.screenings}</strong>
+                </div>
+              ))}
+            </div>
+          )}
         </article>
 
         <article className="panel">
-          <div className="section-heading">
+              <div className="section-heading">
             <div>
               <p className="eyebrow">Risk mix</p>
               <h2>Current screening categories</h2>
             </div>
           </div>
-          <div className="risk-mix">
-            {riskMix.map((item) => (
-              <div className="risk-mix-row" key={item.label}>
-                <div>
-                  <span className={`risk-dot ${item.level === "medium" ? "moderate" : item.level}`} />
-                  <strong>{item.label}</strong>
-                </div>
-                <span>{item.value}</span>
+          {loadState === "ready" && !hasRecordedScreenings ? (
+            <WorkflowEmptyState
+              title="Risk mix will appear after the first submissions"
+              description="Current totals are zero, so category splits and follow-up pressure are not yet meaningful."
+              actions={[
+                "Use the seeded demo data for walkthroughs when you need a realistic risk distribution.",
+                "Return here after live submissions to monitor follow-up backlog and referral load."
+              ]}
+            />
+          ) : (
+            <>
+              <div className="risk-mix">
+                {riskMix.map((item) => (
+                  <div className="risk-mix-row" key={item.label}>
+                    <div>
+                      <span className={`risk-dot ${item.level === "medium" ? "moderate" : item.level}`} />
+                      <strong>{item.label}</strong>
+                    </div>
+                    <span>{item.value}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="bar-chart compact-chart" aria-label="Follow-up pending trend">
-            {dashboardTrend.map((row) => (
-              <div className="bar-row" key={row.day}>
-                <span>{row.day}</span>
-                <progress
-                  aria-label={`${row.followUpPending} pending follow-ups on ${row.day}`}
-                  className="bar-track pending"
-                  max={maxPending}
-                  value={row.followUpPending}
-                />
-                <strong>{row.followUpPending}</strong>
+              <div className="bar-chart compact-chart" aria-label="Follow-up pending trend">
+                {dashboardTrend.map((row) => (
+                  <div className="bar-row" key={row.day}>
+                    <span>{row.day}</span>
+                    <progress
+                      aria-label={`${row.followUpPending} pending follow-ups on ${row.day}`}
+                      className="bar-track pending"
+                      max={maxPending}
+                      value={row.followUpPending}
+                    />
+                    <strong>{row.followUpPending}</strong>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </article>
       </section>
 
@@ -162,34 +189,45 @@ export default function DashboardOverviewPage() {
               <h2>Site summary</h2>
             </div>
           </div>
-          <div className="facility-grid">
-            {facilitySummaries.map((facility) => (
-              <div className="facility-card" key={facility.name}>
-                <div>
-                  <strong>{facility.name}</strong>
-                  <p>{facility.programme}</p>
+          {loadState === "ready" && !hasRecordedScreenings ? (
+            <WorkflowEmptyState
+              title="No facility activity has been recorded"
+              description="Site-by-site breakdowns stay empty until screenings are submitted or demo data is seeded."
+              actions={[
+                "Use this panel to confirm that completed submissions are surfacing in operational summaries.",
+                "Check local data completeness once real records begin to accumulate."
+              ]}
+            />
+          ) : (
+            <div className="facility-grid">
+              {facilitySummaries.map((facility) => (
+                <div className="facility-card" key={facility.name}>
+                  <div>
+                    <strong>{facility.name}</strong>
+                    <p>{facility.programme}</p>
+                  </div>
+                  <div className="facility-stats">
+                    <span>
+                      <strong>{facility.screenings}</strong>
+                      Screenings
+                    </span>
+                    <span>
+                      <strong>{facility.highRisk}</strong>
+                      High risk
+                    </span>
+                    <span>
+                      <strong>{facility.followUpPending}</strong>
+                      Pending
+                    </span>
+                    <span>
+                      <strong>{facility.dataCompleteness}</strong>
+                      Complete
+                    </span>
+                  </div>
                 </div>
-                <div className="facility-stats">
-                  <span>
-                    <strong>{facility.screenings}</strong>
-                    Screenings
-                  </span>
-                  <span>
-                    <strong>{facility.highRisk}</strong>
-                    High risk
-                  </span>
-                  <span>
-                    <strong>{facility.followUpPending}</strong>
-                    Pending
-                  </span>
-                  <span>
-                    <strong>{facility.dataCompleteness}</strong>
-                    Complete
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </article>
 
         <article className="panel">
@@ -199,14 +237,25 @@ export default function DashboardOverviewPage() {
               <h2>Operational alerts</h2>
             </div>
           </div>
-          <div className="alert-list">
-            {dashboardAlerts.map((alert) => (
-              <div className={`alert-card ${alert.severity}`} key={alert.title}>
-                <strong>{alert.title}</strong>
-                <p>{alert.detail}</p>
-              </div>
-            ))}
-          </div>
+          {loadState === "ready" && !hasRecordedScreenings ? (
+            <WorkflowEmptyState
+              title="No operational alerts yet"
+              description="Alerts will populate after screening volume, referral pressure, or missing-data thresholds have something to monitor."
+              actions={[
+                "Use the triage queue to monitor the first urgent or overdue cases.",
+                "Add dashboard thresholds later when operational monitoring becomes pilot-critical."
+              ]}
+            />
+          ) : (
+            <div className="alert-list">
+              {dashboardAlerts.map((alert) => (
+                <div className={`alert-card ${alert.severity}`} key={alert.title}>
+                  <strong>{alert.title}</strong>
+                  <p>{alert.detail}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </article>
       </section>
     </main>

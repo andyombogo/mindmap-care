@@ -3,11 +3,22 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { RiskBadge } from "@/components/RiskBadge";
-import { formatApiError, getLatestRiskSummary, getRiskSummary } from "@/lib/api";
+import { WorkflowEmptyState } from "@/components/WorkflowEmptyState";
+import {
+  ApiRequestError,
+  formatApiError,
+  getLatestRiskSummary,
+  getRiskSummary
+} from "@/lib/api";
 import { samplePatientRiskSummary } from "@/lib/sample-data";
 import type { ApiPatientRiskSummary, PatientRiskSummary, RiskLevel } from "@/lib/types";
 
-type LoadState = "loading" | "ready" | "fallback" | "error";
+type LoadState = "loading" | "ready" | "fallback" | "empty" | "notFound";
+type ReviewDecision =
+  | "Confirm current triage"
+  | "Escalate urgency"
+  | "Reduce urgency"
+  | "Hold for more context";
 
 export default function PatientRiskSummaryPage() {
   return (
@@ -20,9 +31,13 @@ export default function PatientRiskSummaryPage() {
 function PatientRiskSummaryContent() {
   const searchParams = useSearchParams();
   const screeningId = searchParams.get("screeningId");
-  const [patient, setPatient] = useState<PatientRiskSummary>(samplePatientRiskSummary);
+  const [patient, setPatient] = useState<PatientRiskSummary | null>(samplePatientRiskSummary);
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [message, setMessage] = useState("Loading risk summary from backend.");
+  const [reviewDecision, setReviewDecision] = useState<ReviewDecision>("Confirm current triage");
+  const [reviewOwner, setReviewOwner] = useState(samplePatientRiskSummary.assignedTo);
+  const [reviewNote, setReviewNote] = useState("");
+  const [reviewDraftMessage, setReviewDraftMessage] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -42,6 +57,17 @@ function PatientRiskSummaryContent() {
         if (!isMounted) {
           return;
         }
+        if (error instanceof ApiRequestError && error.status === 404) {
+          setPatient(null);
+          if (screeningId) {
+            setLoadState("notFound");
+            setMessage("The requested screening summary could not be found.");
+          } else {
+            setLoadState("empty");
+            setMessage("No screening summaries are available yet.");
+          }
+          return;
+        }
         setPatient(samplePatientRiskSummary);
         setLoadState("fallback");
         setMessage(`Backend summary unavailable: ${formatApiError(error)} Showing demo placeholder result.`);
@@ -52,10 +78,51 @@ function PatientRiskSummaryContent() {
     };
   }, [screeningId]);
 
+  useEffect(() => {
+    if (!patient) {
+      return;
+    }
+    setReviewDecision(patient.requiresHumanReview ? "Confirm current triage" : "Hold for more context");
+    setReviewOwner(patient.assignedTo);
+    setReviewNote("");
+    setReviewDraftMessage("");
+  }, [patient]);
+
   const patientAge = useMemo(
-    () => (typeof patient.age === "number" ? `${patient.age} years` : patient.age),
-    [patient.age]
+    () => (typeof patient?.age === "number" ? `${patient.age} years` : patient?.age ?? "Age not recorded"),
+    [patient]
   );
+
+  if (!patient) {
+    return (
+      <main className="page-stack">
+        <div className={`integration-banner ${loadState}`}>
+          <strong>{loadState === "notFound" ? "Summary unavailable" : "No summaries yet"}</strong>
+          <span>{message}</span>
+        </div>
+
+        <WorkflowEmptyState
+          title={loadState === "notFound" ? "This screening summary is not available" : "No patient risk summary has been generated yet"}
+          description={
+            loadState === "notFound"
+              ? "The link points to a screening record the backend cannot resolve. Open a newer result from the triage queue or submit a new screening."
+              : "Create the first screening to generate a clinician-facing risk summary with explanation, triage guidance, and review status."
+          }
+          actions={
+            loadState === "notFound"
+              ? [
+                  "Return to the triage queue and open an active case.",
+                  "Confirm the screening ID if this link came from an older test record."
+                ]
+              : [
+                  "Submit a new screening from the intake workflow.",
+                  "Use seeded demo data if you need a walkthrough-ready example immediately."
+                ]
+          }
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="page-stack">
@@ -126,6 +193,129 @@ function PatientRiskSummaryContent() {
               <strong>{patient.assignedTo}</strong>
             </div>
           </div>
+        </article>
+      </section>
+
+      <section className="content-grid two-column">
+        <article className="panel review-checkpoint-panel">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Clinical review checkpoint</p>
+              <h2>Human sign-off before referral closure</h2>
+            </div>
+            <span className={`status-pill ${patient.requiresHumanReview ? "" : "status-quiet"}`}>
+              {patient.requiresHumanReview ? "Human review required" : "Review optional"}
+            </span>
+          </div>
+
+          <div className="summary-list">
+            <div className="summary-item">
+              <span>Review owner</span>
+              <strong>{patient.assignedTo}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Current status</span>
+              <strong>{patient.reviewStatus}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Data gaps</span>
+              <strong>
+                {patient.missingFields.length > 0 ? patient.missingFields.join(", ") : "No missing fields flagged"}
+              </strong>
+            </div>
+          </div>
+
+          <div className="list-stack review-checklist">
+            <div className="timeline-row">
+              <span className="risk-dot moderate" />
+              <p>Verify the presenting context, language, and collateral history before changing urgency.</p>
+            </div>
+            <div className="timeline-row">
+              <span className="risk-dot moderate" />
+              <p>Confirm referral ownership, follow-up timing, and any crisis escalation steps with the care team.</p>
+            </div>
+          </div>
+        </article>
+
+        <article className="panel review-checkpoint-panel">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Override and handoff</p>
+              <h2>Capture the clinician disposition</h2>
+            </div>
+          </div>
+
+          <div className="field">
+            <label htmlFor="reviewDecision">Review decision</label>
+            <select
+              id="reviewDecision"
+              onChange={(event) => setReviewDecision(event.target.value as ReviewDecision)}
+              value={reviewDecision}
+            >
+              <option value="Confirm current triage">Confirm current triage</option>
+              <option value="Escalate urgency">Escalate urgency</option>
+              <option value="Reduce urgency">Reduce urgency</option>
+              <option value="Hold for more context">Hold for more context</option>
+            </select>
+          </div>
+
+          <div className="field">
+            <label htmlFor="reviewOwner">Reviewer or referral owner</label>
+            <input
+              id="reviewOwner"
+              onChange={(event) => setReviewOwner(event.target.value)}
+              value={reviewOwner}
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="reviewNote">Review note</label>
+            <textarea
+              id="reviewNote"
+              onChange={(event) => setReviewNote(event.target.value)}
+              placeholder="Document the reason for confirming, escalating, or holding this case."
+              rows={4}
+              value={reviewNote}
+            />
+          </div>
+
+          <div className="action-row">
+            <button
+              className="button secondary"
+              onClick={() => setReviewDraftMessage("Review note captured for this session.")}
+              type="button"
+            >
+              Save review note
+            </button>
+            <button
+              className="button primary"
+              onClick={() =>
+                setReviewDraftMessage(
+                  `Marked for ${reviewDecision.toLowerCase()} with ${reviewOwner || "an assigned reviewer"}.`
+                )
+              }
+              type="button"
+            >
+              Mark reviewed
+            </button>
+          </div>
+
+          <div className="summary-list compact review-draft-summary">
+            <div className="summary-item">
+              <span>Selected decision</span>
+              <strong>{reviewDecision}</strong>
+            </div>
+            <div className="summary-item">
+              <span>Handoff owner</span>
+              <strong>{reviewOwner || "Not assigned"}</strong>
+            </div>
+          </div>
+
+          {reviewDraftMessage ? (
+            <div className="review-session-note" role="status">
+              {reviewDraftMessage}
+            </div>
+          ) : null}
         </article>
       </section>
 
@@ -254,6 +444,8 @@ function mapApiSummaryToPatient(summary: ApiPatientRiskSummary): PatientRiskSumm
     triageWindow: summary.triage_window,
     reviewStatus: summary.requires_human_review ? "Awaiting clinician review" : "Review optional",
     assignedTo: summary.requires_human_review ? "Clinical review queue" : "Facility team",
+    requiresHumanReview: summary.requires_human_review,
+    missingFields: summary.missing_fields.map(titleCase),
     site: summary.site_id,
     screener: summary.screener_role.replaceAll("_", " "),
     screenedAt: formatDate(summary.screened_at),

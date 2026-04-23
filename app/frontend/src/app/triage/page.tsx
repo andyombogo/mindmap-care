@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { RiskBadge } from "@/components/RiskBadge";
+import { WorkflowEmptyState } from "@/components/WorkflowEmptyState";
 import { formatApiError, getTriageQueue } from "@/lib/api";
 import { triageQueue } from "@/lib/sample-data";
 import type { ApiTriageQueueItem, RiskLevel, TriageItem } from "@/lib/types";
@@ -100,6 +101,7 @@ export default function TriageQueuePage() {
   const overdueCount = queueItems.filter(
     (item) => item.followUpStatus === "overdue"
   ).length;
+  const hasQueueItems = queueItems.length > 0;
 
   return (
     <main className="page-stack">
@@ -203,103 +205,128 @@ export default function TriageQueuePage() {
         <div className="section-heading">
           <div>
             <p className="eyebrow">Active worklist</p>
-            <h2>{filteredItems.length} cases shown</h2>
+            <h2>{hasQueueItems ? `${filteredItems.length} cases shown` : "No active cases"}</h2>
           </div>
           <span className="status-pill">Sorted by {sortLabel(sortKey)}</span>
         </div>
 
-        <div className="table-wrap">
-          <table className="data-table triage-table">
-            <thead>
-              <tr>
-                <th>Patient</th>
-                <th>
-                  <SortButton active={sortKey === "riskLevel"} onClick={() => setSortKey("riskLevel")}>
-                    Risk
-                  </SortButton>
-                </th>
-                <th>
-                  <SortButton active={sortKey === "screeningTime"} onClick={() => setSortKey("screeningTime")}>
-                    Screening time
-                  </SortButton>
-                </th>
-                <th>
-                  <SortButton active={sortKey === "priority"} onClick={() => setSortKey("priority")}>
-                    Referral urgency
-                  </SortButton>
-                </th>
-                <th>Missing data</th>
-                <th>
-                  <SortButton active={sortKey === "followUpStatus"} onClick={() => setSortKey("followUpStatus")}>
-                    Follow-up
-                  </SortButton>
-                </th>
-                <th>Owner</th>
-                <th>Review</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredItems.map((item) => (
-                <tr key={item.patientId}>
-                  <td>
-                    <strong>{item.patientId}</strong>
-                    <p>{item.site}</p>
-                    <p>{item.concern}</p>
-                  </td>
-                  <td>
-                    <RiskBadge level={item.riskLevel} />
-                  </td>
-                  <td>
-                    <strong>{item.screeningTime}</strong>
-                    <p>{item.waiting}</p>
-                  </td>
-                  <td>
-                    <span className={`priority-badge ${priorityClass(item.priority)}`}>
-                      {item.referralUrgency}
-                    </span>
-                    <p>{item.nextAction}</p>
-                  </td>
-                  <td>
-                    {item.missingDataFlags.length > 0 ? (
-                      <div className="flag-list">
-                        {item.missingDataFlags.map((flag) => (
-                          <span className="data-flag" key={flag}>
-                            {flag}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="status-indicator complete">Complete</span>
-                    )}
-                  </td>
-                  <td>
-                    <span className={`status-indicator ${item.followUpStatus}`}>
-                      {followUpLabel(item.followUpStatus)}
-                    </span>
-                    <p>{item.followUpDetail}</p>
-                  </td>
-                  <td>{item.owner}</td>
-                  <td>
-                    <Link
-                      className="button secondary table-action"
-                      href={
-                        item.screeningId
-                          ? `/patients/risk-summary?screeningId=${item.screeningId}`
-                          : "/patients/risk-summary"
-                      }
-                    >
-                      Open
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {!hasQueueItems ? (
+          <WorkflowEmptyState
+            title="No screening results are waiting in the queue"
+            description="The triage queue is connected, but there are no submitted cases requiring review right now."
+            actions={[
+              "Capture a new screening to create the first reviewable case.",
+              "Confirm whether demo seed data is disabled in the backend environment.",
+              "Use the dashboard to verify that new submissions appear in operational counts."
+            ]}
+          >
+            <Link className="button primary" href="/screenings/new">
+              Start the first screening
+            </Link>
+          </WorkflowEmptyState>
+        ) : (
+          <>
+            <div className="table-wrap">
+              <table className="data-table triage-table">
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>
+                      <SortButton active={sortKey === "riskLevel"} onClick={() => setSortKey("riskLevel")}>
+                        Risk
+                      </SortButton>
+                    </th>
+                    <th>
+                      <SortButton active={sortKey === "screeningTime"} onClick={() => setSortKey("screeningTime")}>
+                        Screening time
+                      </SortButton>
+                    </th>
+                    <th>
+                      <SortButton active={sortKey === "priority"} onClick={() => setSortKey("priority")}>
+                        Referral urgency
+                      </SortButton>
+                    </th>
+                    <th>Missing data</th>
+                    <th>
+                      <SortButton active={sortKey === "followUpStatus"} onClick={() => setSortKey("followUpStatus")}>
+                        Follow-up
+                      </SortButton>
+                    </th>
+                    <th>Owner</th>
+                    <th>Review</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredItems.map((item) => (
+                    <tr key={item.patientId}>
+                      <td>
+                        <strong>{item.patientId}</strong>
+                        <p>{item.site}</p>
+                        <p>{item.concern}</p>
+                      </td>
+                      <td>
+                        <RiskBadge level={item.riskLevel} />
+                      </td>
+                      <td>
+                        <strong>{item.screeningTime}</strong>
+                        <p>{item.waiting}</p>
+                      </td>
+                      <td>
+                        <span className={`priority-badge ${priorityClass(item.priority)}`}>
+                          {item.referralUrgency}
+                        </span>
+                        <p>{item.nextAction}</p>
+                      </td>
+                      <td>
+                        {item.missingDataFlags.length > 0 ? (
+                          <div className="flag-list">
+                            {item.missingDataFlags.map((flag) => (
+                              <span className="data-flag" key={flag}>
+                                {flag}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="status-indicator complete">Complete</span>
+                        )}
+                      </td>
+                      <td>
+                        <span className={`status-indicator ${item.followUpStatus}`}>
+                          {followUpLabel(item.followUpStatus)}
+                        </span>
+                        <p>{item.followUpDetail}</p>
+                      </td>
+                      <td>{item.owner}</td>
+                      <td>
+                        <Link
+                          className="button secondary table-action"
+                          href={
+                            item.screeningId
+                              ? `/patients/risk-summary?screeningId=${item.screeningId}`
+                              : "/patients/risk-summary"
+                          }
+                        >
+                          Open
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-        {filteredItems.length === 0 ? (
-          <div className="empty-state">No cases match the current filters.</div>
-        ) : null}
+            {filteredItems.length === 0 ? (
+              <WorkflowEmptyState
+                title="No cases match the current filters"
+                description="Try widening the search or clearing one of the queue filters to bring cases back into view."
+                actions={[
+                  "Clear the missing-data filter if you want to see complete records as well.",
+                  "Switch risk and follow-up filters back to All statuses for a broader queue view."
+                ]}
+              />
+            ) : null}
+          </>
+        )}
       </section>
     </main>
   );

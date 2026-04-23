@@ -1128,6 +1128,36 @@ textarea {
   background: #fbfdfc;
 }
 
+.workflow-empty-state {
+  display: grid;
+  gap: 1rem;
+}
+
+.workflow-empty-title {
+  display: block;
+  color: var(--text);
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.workflow-empty-description {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.workflow-empty-actions {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.workflow-empty-footer {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .integration-banner {
   display: flex;
   align-items: center;
@@ -1157,6 +1187,33 @@ textarea {
 .integration-banner.error {
   border-color: #fde68a;
   background: #fffbeb;
+}
+
+.status-pill.status-quiet {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.review-checkpoint-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.review-checklist {
+  margin-top: 0;
+}
+
+.review-draft-summary {
+  margin-top: 0;
+}
+
+.review-session-note {
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
 }
 
 @media (max-width: 1040px) {

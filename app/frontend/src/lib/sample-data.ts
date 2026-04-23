@@ -228,6 +228,8 @@ export const samplePatientRiskSummary: PatientRiskSummary = {
   triageWindow: "Same day review",
   reviewStatus: "Awaiting clinician",
   assignedTo: "Dr. Achieng",
+  requiresHumanReview: true,
+  missingFields: ["Medication history", "Emergency contact"],
   site: "Kisumu outreach clinic",
   screener: "Nurse Wanjiku",
   screenedAt: "Today, 09:42",
