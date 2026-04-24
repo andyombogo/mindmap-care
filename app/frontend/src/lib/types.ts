@@ -189,6 +189,13 @@ export type ApiDashboardSummary = {
   pending_follow_ups: number;
   completed_referrals: number;
   risk_distribution: Record<RiskLevel, number>;
+  average_data_quality_score: number;
+  data_complete_records: number;
+  records_with_missing_data: number;
+  most_common_missing_fields: Array<{
+    field: string;
+    count: number;
+  }>;
 };
 
 export type ApiTriageQueueItem = {

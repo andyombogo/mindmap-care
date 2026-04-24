@@ -154,6 +154,15 @@ def get_dashboard_summary() -> DashboardSummary:
 
     total = sum(distribution.values())
     high_count = distribution["high"] + distribution["urgent"]
+    data_quality_scores = [summary.data_quality_score for summary in _risk_summaries.values()]
+    missing_field_counts: dict[str, int] = {}
+    records_with_missing_data = 0
+    for summary in _risk_summaries.values():
+        if summary.missing_fields:
+            records_with_missing_data += 1
+        for field in summary.missing_fields:
+            missing_field_counts[field] = missing_field_counts.get(field, 0) + 1
+
     follow_up_statuses = [
         _safe_follow_up_status(
             _screening_inputs.get(summary.screening_id).metadata.get("follow_up_status")
@@ -175,6 +184,16 @@ def get_dashboard_summary() -> DashboardSummary:
         pending_follow_ups=pending_follow_ups,
         completed_referrals=completed_referrals,
         risk_distribution=distribution,
+        average_data_quality_score=round(sum(data_quality_scores) / total, 2) if total else 0,
+        data_complete_records=total - records_with_missing_data,
+        records_with_missing_data=records_with_missing_data,
+        most_common_missing_fields=[
+            {"field": field, "count": count}
+            for field, count in sorted(
+                missing_field_counts.items(),
+                key=lambda item: (-item[1], item[0]),
+            )[:5]
+        ],
     )
 
 

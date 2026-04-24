@@ -64,6 +64,51 @@ def test_demo_store_dashboard_counts_submitted_screenings():
     assert sum(dashboard.risk_distribution.values()) == 1
 
 
+def test_demo_store_dashboard_summarizes_data_completeness():
+    reset_demo_store()
+    complete_submission = ScreeningSubmission(
+        site_id="clinic-001",
+        screener_role="nurse",
+        age_years=34,
+        sex="female",
+        consent_confirmed=True,
+        responses=[
+            {
+                "code": "mh-mood",
+                "label": "Low mood",
+                "domain": "mental_health",
+                "value": 1,
+            }
+        ],
+    )
+    incomplete_submission = ScreeningSubmission(
+        site_id="clinic-001",
+        screener_role="nurse",
+        consent_confirmed=True,
+        responses=[
+            {
+                "code": "fn-daily",
+                "label": "Daily activity",
+                "domain": "function",
+                "value": None,
+            }
+        ],
+    )
+
+    submit_screening_for_mock_inference(complete_submission)
+    submit_screening_for_mock_inference(incomplete_submission)
+    dashboard = get_dashboard_summary()
+
+    assert dashboard.average_data_quality_score == 0.88
+    assert dashboard.data_complete_records == 1
+    assert dashboard.records_with_missing_data == 1
+    assert {item.field for item in dashboard.most_common_missing_fields} == {
+        "age_years",
+        "fn-daily",
+        "sex",
+    }
+
+
 def test_demo_store_seeds_synthetic_records_for_walkthroughs():
     reset_demo_store()
 

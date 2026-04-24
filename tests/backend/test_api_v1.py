@@ -107,6 +107,8 @@ def test_dashboard_summary_placeholder_returns_counts():
     assert response.status_code == 200
     assert response.json()["total_screenings"] == 1
     assert "medium_risk_cases" in response.json()
+    assert response.json()["records_with_missing_data"] == 1
+    assert response.json()["most_common_missing_fields"]
 
 
 def test_triage_queue_returns_prioritized_demo_items():

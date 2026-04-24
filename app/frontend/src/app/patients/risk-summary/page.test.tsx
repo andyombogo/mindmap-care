@@ -191,6 +191,7 @@ describe("PatientRiskSummaryPage", () => {
     render(<PatientRiskSummaryPage />);
 
     expect(await screen.findByText("Human sign-off before referral closure")).toBeInTheDocument();
+    expect(await screen.findByText("Patient MC-123")).toBeInTheDocument();
 
     const decisionSelect = screen.getByLabelText("Review decision") as HTMLSelectElement;
     fireEvent.change(decisionSelect, {

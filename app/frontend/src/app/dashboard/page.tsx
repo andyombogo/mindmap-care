@@ -17,6 +17,17 @@ const maxScreenings = Math.max(...dashboardTrend.map((row) => row.screenings));
 const maxPending = Math.max(...dashboardTrend.map((row) => row.followUpPending));
 
 type LoadState = "loading" | "ready" | "fallback";
+type DataQualitySummary = {
+  averageCompleteness: string;
+  completeRecords: string;
+  recordsWithMissingData: string;
+  missingFields: Array<{
+    field: string;
+    label: string;
+    count: number;
+  }>;
+  highestMissingCount: number;
+};
 
 export default function DashboardOverviewPage() {
   const [summary, setSummary] = useState<ApiDashboardSummary | null>(null);
@@ -51,6 +62,7 @@ export default function DashboardOverviewPage() {
 
   const hasRecordedScreenings = Boolean(summary && summary.total_screenings > 0);
   const metrics = useMemo(() => buildDashboardMetrics(summary), [summary]);
+  const dataQuality = useMemo(() => buildDataQualitySummary(summary), [summary]);
   const riskMix = useMemo(
     () =>
       summary
@@ -134,7 +146,7 @@ export default function DashboardOverviewPage() {
         </article>
 
         <article className="panel">
-              <div className="section-heading">
+          <div className="section-heading">
             <div>
               <p className="eyebrow">Risk mix</p>
               <h2>Current screening categories</h2>
@@ -233,6 +245,64 @@ export default function DashboardOverviewPage() {
         <article className="panel">
           <div className="section-heading">
             <div>
+              <p className="eyebrow">Data quality</p>
+              <h2>Completeness indicators</h2>
+            </div>
+          </div>
+          {loadState === "ready" && !hasRecordedScreenings ? (
+            <WorkflowEmptyState
+              title="Completeness indicators need screening records"
+              description="The backend is connected, but there are no records to evaluate for missing fields or data quality yet."
+              actions={[
+                "Submit a screening with the intake form to start tracking completeness.",
+                "Seed demo data when partner walkthroughs need realistic missing-data signals."
+              ]}
+            />
+          ) : (
+            <>
+              <div className="quality-grid" aria-label="Data completeness indicators">
+                <div className="quality-stat">
+                  <span>Average completeness</span>
+                  <strong>{dataQuality.averageCompleteness}</strong>
+                  <p>Mean data quality score across records</p>
+                </div>
+                <div className="quality-stat">
+                  <span>Complete records</span>
+                  <strong>{dataQuality.completeRecords}</strong>
+                  <p>No tracked missing fields</p>
+                </div>
+                <div className="quality-stat">
+                  <span>Needs data review</span>
+                  <strong>{dataQuality.recordsWithMissingData}</strong>
+                  <p>Records with one or more missing fields</p>
+                </div>
+              </div>
+              <div className="missing-field-list" aria-label="Most common missing fields">
+                {dataQuality.missingFields.length > 0 ? (
+                  dataQuality.missingFields.map((item) => (
+                    <div className="missing-field-row" key={item.field}>
+                      <span>{item.label}</span>
+                      <progress
+                        aria-label={`${item.count} records missing ${item.label}`}
+                        max={dataQuality.highestMissingCount}
+                        value={item.count}
+                      />
+                      <strong>{item.count}</strong>
+                    </div>
+                  ))
+                ) : (
+                  <p className="quality-note">No tracked missing fields in the current dashboard summary.</p>
+                )}
+              </div>
+            </>
+          )}
+        </article>
+      </section>
+
+      <section className="content-grid">
+        <article className="panel">
+          <div className="section-heading">
+            <div>
               <p className="eyebrow">Attention areas</p>
               <h2>Operational alerts</h2>
             </div>
@@ -292,6 +362,52 @@ function buildDashboardMetrics(summary: ApiDashboardSummary | null): DashboardMe
       label: "Follow-up pending",
       value: String(summary.pending_follow_ups),
       detail: `${summary.completed_referrals} referrals completed`
+    },
+    {
+      label: "Data completeness",
+      value: formatPercent(summary.average_data_quality_score),
+      detail: `${summary.records_with_missing_data} records need data review`
     }
   ];
+}
+
+function buildDataQualitySummary(summary: ApiDashboardSummary | null): DataQualitySummary {
+  if (!summary) {
+    const missingFields = [
+      { field: "functional_score", label: "Functional score", count: 18 },
+      { field: "follow_up_status", label: "Follow up status", count: 12 },
+      { field: "emergency_contact", label: "Emergency contact", count: 9 }
+    ];
+
+    return {
+      averageCompleteness: "93%",
+      completeRecords: "392",
+      recordsWithMissingData: "36",
+      missingFields,
+      highestMissingCount: Math.max(...missingFields.map((item) => item.count))
+    };
+  }
+
+  const missingFields = summary.most_common_missing_fields.map((item) => ({
+    ...item,
+    label: humanizeFieldName(item.field)
+  }));
+
+  return {
+    averageCompleteness: formatPercent(summary.average_data_quality_score),
+    completeRecords: String(summary.data_complete_records),
+    recordsWithMissingData: String(summary.records_with_missing_data),
+    missingFields,
+    highestMissingCount: Math.max(...missingFields.map((item) => item.count), 1)
+  };
+}
+
+function formatPercent(value: number) {
+  return `${Math.round(value * 100)}%`;
+}
+
+function humanizeFieldName(field: string) {
+  return field
+    .replace(/[_-]/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 }
