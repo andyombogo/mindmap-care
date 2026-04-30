@@ -1,9 +1,18 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
+from app.core.request_context import (
+    REQUEST_ID_HEADER,
+    http_exception_handler,
+    request_id_middleware,
+    unhandled_exception_handler,
+    validation_exception_handler,
+)
 from app.schemas.health import HealthResponse
 from app.services.demo_store import seed_demo_store_from_synthetic
 
@@ -28,7 +37,12 @@ def create_app() -> FastAPI:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=[REQUEST_ID_HEADER],
     )
+    app.middleware("http")(request_id_middleware)
+    app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+    app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    app.add_exception_handler(Exception, unhandled_exception_handler)
 
     @app.get("/health", response_model=HealthResponse, tags=["health"])
     def health_check() -> HealthResponse:

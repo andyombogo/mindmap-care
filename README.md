@@ -40,6 +40,7 @@ Implemented MVP pieces:
 - triage queue page connected to backend demo data
 - dashboard overview connected to backend summary data
 - deterministic mock inference layer
+- structured API error envelopes with request ID headers
 - synthetic demo screening data
 - Docker Compose local development setup
 - backend API tests and lightweight frontend test scaffold
@@ -190,7 +191,7 @@ npm run typecheck
 npm run test
 ```
 
-The current backend tests cover health endpoints, schema validation, mock inference behavior, seeded demo data, dashboard summary behavior, and triage queue behavior.
+The current backend tests cover health endpoints, schema validation, structured error responses, request ID headers, mock inference behavior, seeded demo data, dashboard summary behavior, and triage queue behavior.
 
 ## Documentation
 
