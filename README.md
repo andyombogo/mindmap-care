@@ -201,6 +201,7 @@ Key project documents:
 - [Clinical workflow](docs/clinical-workflow.md)
 - [Technical architecture](docs/technical-architecture.md)
 - [Model card](docs/model-card.md)
+- [Mock scoring rules](docs/mock-scoring-rules.md)
 - [Pilot strategy](docs/pilot-strategy.md)
 - [Regulatory and ethics notes](docs/regulatory-and-ethics-notes.md)
 - [Roadmap](ROADMAP.md)

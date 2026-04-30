@@ -71,6 +71,8 @@ The MVP uses transparent rules:
 
 This is deterministic and intentionally simple.
 
+The exact development-only scoring formula, triage thresholds, and fixture expectations are documented in [mock-scoring-rules.md](mock-scoring-rules.md).
+
 ## Explainability
 
 The explanation output includes:

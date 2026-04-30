@@ -8,6 +8,7 @@ This folder contains the shared product, clinical, technical, model, pilot, and 
 - [Clinical workflow](clinical-workflow.md): intended screening, review, triage, and follow-up workflow
 - [Technical architecture](technical-architecture.md): frontend, backend, model interface, data, and deployment architecture
 - [Model card](model-card.md): current mock model position, intended use, limitations, and validation needs
+- [Mock scoring rules](mock-scoring-rules.md): plain-language scoring logic and deterministic fixture expectations
 - [Pilot strategy](pilot-strategy.md): pilot goals, operating model, readiness status, and evidence package
 - [Regulatory and ethics notes](regulatory-and-ethics-notes.md): safe-use, privacy, risk, and governance considerations
 
