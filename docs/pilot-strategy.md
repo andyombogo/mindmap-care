@@ -106,7 +106,7 @@ Not ready for live pilot use:
 - No persistent database or immutable audit trail
 - No validated clinical model or local performance evidence
 - No production data protection assessment
-- No incident reporting, override logging, or deployment monitoring workflow
+- No incident reporting or deployment monitoring workflow
 
 Use this status section as a living checklist. Each item should be converted into a tracked issue before a real-world pilot.
 

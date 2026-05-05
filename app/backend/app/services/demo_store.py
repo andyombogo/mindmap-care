@@ -11,6 +11,8 @@ from app.schemas.dashboard import DashboardSummary
 from app.schemas.screening import (
     AuditEventResponse,
     PatientRiskSummaryResponse,
+    ReportExportRequest,
+    ReportExportResponse,
     RiskSummaryFactor,
     ScreeningReviewRequest,
     ScreeningReviewResponse,
@@ -264,6 +266,40 @@ def save_screening_review(
         review_status=review_status,
         assigned_to=payload.assigned_to,
         note=payload.note,
+        audit_event=audit_event,
+        summary=updated_summary,
+    )
+
+
+def record_report_export(
+    screening_id: str,
+    payload: ReportExportRequest,
+) -> ReportExportResponse | None:
+    """Capture a draft report export request for MVP traceability."""
+    summary = _risk_summaries.get(screening_id)
+    if summary is None:
+        return None
+
+    exported_at = datetime.now(timezone.utc).isoformat()
+    report_status = f"Draft report exported for {payload.export_format.upper()}"
+    updated_summary = summary.model_copy(update={"report_status": report_status})
+    _risk_summaries[screening_id] = updated_summary
+
+    audit_event = _record_audit_event(
+        screening_id,
+        "report_exported",
+        actor=payload.actor,
+        detail=f"Draft non-diagnostic report export requested as {payload.export_format.upper()}.",
+        metadata={
+            "export_format": payload.export_format,
+            "note_present": bool(str(payload.note or "").strip()),
+        },
+    )
+
+    return ReportExportResponse(
+        screening_id=screening_id,
+        report_status=report_status,
+        exported_at=exported_at,
         audit_event=audit_event,
         summary=updated_summary,
     )

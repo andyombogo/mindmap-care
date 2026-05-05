@@ -216,3 +216,42 @@ def test_screening_review_endpoint_updates_review_metadata():
     assert review_response.json()["summary"]["last_reviewed_by"] == "Dr. Achieng"
     assert review_response.json()["audit_event"]["event_type"] == "override_recorded"
     assert audit_response.json()[0]["event_type"] == "override_recorded"
+
+
+def test_report_export_endpoint_records_audit_event_and_report_status():
+    reset_demo_store()
+    client = TestClient(app)
+    create_response = client.post(
+        "/api/v1/screenings",
+        json={
+            "patient_reference_id": "MC-export",
+            "site_id": "clinic-001",
+            "screener_role": "clinician",
+            "consent_confirmed": True,
+            "responses": [
+                {
+                    "code": "mh-1",
+                    "label": "Feeling down",
+                    "value": 2,
+                    "domain": "mental_health",
+                }
+            ],
+        },
+    )
+
+    screening_id = create_response.json()["screening_id"]
+    export_response = client.post(
+        f"/api/v1/screenings/{screening_id}/report-export",
+        json={
+            "actor": "Clinical reviewer",
+            "export_format": "pdf",
+            "note": "Prepared for supervised referral review.",
+        },
+    )
+    audit_response = client.get(f"/api/v1/screenings/{screening_id}/audit-events")
+
+    assert export_response.status_code == 200
+    assert export_response.json()["report_status"] == "Draft report exported for PDF"
+    assert export_response.json()["summary"]["report_status"] == "Draft report exported for PDF"
+    assert export_response.json()["audit_event"]["event_type"] == "report_exported"
+    assert audit_response.json()[0]["event_type"] == "report_exported"

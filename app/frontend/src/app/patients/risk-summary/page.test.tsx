@@ -16,6 +16,7 @@ vi.mock("@/lib/api", async () => {
     ...actual,
     getLatestRiskSummary: vi.fn(),
     getRiskSummary: vi.fn(),
+    exportRiskReport: vi.fn(),
     saveScreeningReview: vi.fn(),
     formatApiError: vi.fn(() => "Backend unavailable")
   };

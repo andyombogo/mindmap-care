@@ -40,18 +40,18 @@ Implemented MVP pieces:
 - triage queue page connected to backend demo data
 - dashboard overview connected to backend summary data
 - deterministic mock inference layer
+- clinician review, override, and draft report export audit events
 - structured API error envelopes with request ID headers
 - synthetic demo screening data
 - Docker Compose local development setup
 - backend API tests and lightweight frontend test scaffold
-- product, workflow, architecture, ethics, model, and pilot documentation
+- product, workflow, architecture, ethics, validation, model, and pilot documentation
 
 Not yet implemented:
 
 - authentication and role-based access
 - persistent database storage
 - immutable audit logs
-- clinician override workflow
 - production data protection controls
 - validated clinical model
 - deployment monitoring and incident reporting
@@ -202,6 +202,7 @@ Key project documents:
 - [Technical architecture](docs/technical-architecture.md)
 - [Model card](docs/model-card.md)
 - [Mock scoring rules](docs/mock-scoring-rules.md)
+- [Validation protocol](docs/validation-protocol.md)
 - [Pilot strategy](docs/pilot-strategy.md)
 - [Regulatory and ethics notes](docs/regulatory-and-ethics-notes.md)
 - [Roadmap](ROADMAP.md)

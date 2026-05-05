@@ -18,6 +18,8 @@ ReviewDecision = Literal[
     "hold_for_more_context",
 ]
 
+ReportExportFormat = Literal["print", "pdf", "html"]
+
 
 class ScreeningResponseItem(BaseModel):
     """Single screening question response."""
@@ -150,5 +152,23 @@ class ScreeningReviewResponse(BaseModel):
     review_status: str
     assigned_to: str
     note: str | None = None
+    audit_event: AuditEventResponse
+    summary: PatientRiskSummaryResponse
+
+
+class ReportExportRequest(BaseModel):
+    """Report export audit payload from the clinician-facing summary page."""
+
+    actor: str = Field(min_length=1)
+    export_format: ReportExportFormat = "print"
+    note: str | None = None
+
+
+class ReportExportResponse(BaseModel):
+    """Result returned after recording a draft report export event."""
+
+    screening_id: str
+    report_status: str
+    exported_at: str
     audit_event: AuditEventResponse
     summary: PatientRiskSummaryResponse

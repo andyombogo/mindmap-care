@@ -2,6 +2,8 @@
 
 MindMap Care is being developed as an explainable AI screening and triage platform for mental health, cognitive, and functional risk stratification in African health systems. This roadmap keeps the work practical: define the product clearly, design clinical workflows before overbuilding, validate model behavior, and move toward pilots only when safety, trust, and operational readiness are in place.
 
+Status key: `[x]` completed or documented in the repository as of 2026-05-05; `[ ]` not yet implemented or still only conceptual.
+
 ## Phase 0: Product Definition
 
 ### Objective
@@ -10,12 +12,12 @@ Define the clinical, operational, and ethical boundaries for MindMap Care before
 
 ### Deliverables
 
-- Clear product brief describing the target conditions, screening use cases, and triage decisions supported by the platform.
-- Initial user personas for primary care clinicians, community health workers, mental health specialists, program managers, and health system administrators.
-- Prioritized problem statements for African health system contexts, including workforce constraints, referral bottlenecks, stigma, low specialist coverage, and variable data availability.
-- Definition of intended use, clinical disclaimers, non-diagnostic positioning, and escalation boundaries.
-- Initial list of target settings, such as primary care clinics, community outreach programs, hospitals, universities, NGOs, and county or ministry programs.
-- Risk register covering clinical harm, bias, privacy, overreliance, false reassurance, data misuse, and implementation failure.
+- [x] Clear product brief describing the target conditions, screening use cases, and triage decisions supported by the platform.
+- [x] Initial user personas for primary care clinicians, community health workers, mental health specialists, program managers, and health system administrators.
+- [x] Prioritized problem statements for African health system contexts, including workforce constraints, referral bottlenecks, stigma, low specialist coverage, and variable data availability.
+- [x] Definition of intended use, clinical disclaimers, non-diagnostic positioning, and escalation boundaries.
+- [x] Initial list of target settings, such as primary care clinics, community outreach programs, hospitals, universities, NGOs, and county or ministry programs.
+- [ ] Formal risk register with owners, severity, mitigations, and review cadence covering clinical harm, bias, privacy, overreliance, false reassurance, data misuse, and implementation failure.
 
 ### Exit Criteria
 
@@ -32,13 +34,13 @@ Design real-world screening and triage workflows that fit into African health de
 
 ### Deliverables
 
-- End-to-end workflow maps for patient intake, screening, risk scoring, explanation review, referral, follow-up, and reporting.
-- Role-based workflow definitions for community health workers, nurses, clinicians, supervisors, and administrators.
-- Triage categories and action pathways, such as low risk, monitor, refer, urgent referral, and crisis escalation.
-- Draft screening journey for mental health, cognitive risk, and functional impairment use cases.
-- Human-in-the-loop review points for clinician override, referral confirmation, and risk escalation.
-- Offline, low-bandwidth, and shared-device usage assumptions.
-- Data capture requirements, including required fields, optional fields, consent status, language, location, referral outcome, and follow-up status.
+- [x] End-to-end workflow maps for patient intake, screening, risk scoring, explanation review, referral, follow-up, and reporting.
+- [x] Role-based workflow definitions for community health workers, nurses, clinicians, supervisors, and administrators.
+- [x] Triage categories and action pathways, such as low risk, monitor, refer, urgent referral, and crisis escalation.
+- [x] Draft screening journey for mental health, cognitive risk, and functional impairment use cases.
+- [x] Human-in-the-loop review points for clinician override, referral confirmation, and risk escalation.
+- [ ] Offline, low-bandwidth, and shared-device usage assumptions.
+- [x] Data capture requirements, including required fields, optional fields, consent status, language, location, referral outcome, and follow-up status.
 
 ### Exit Criteria
 
@@ -55,14 +57,14 @@ Build a transparent, auditable data and model foundation that can support explai
 
 ### Deliverables
 
-- Data dictionary for screening responses, demographic context, functional indicators, referral metadata, and outcome labels.
-- Synthetic or de-identified seed datasets for local development and UI testing.
-- Initial risk stratification approach, starting with interpretable baseline models and rules before advanced machine learning.
-- Model card template describing intended use, limitations, training data, fairness considerations, and evaluation results.
-- Explainability layer that surfaces the main factors contributing to a risk result in plain language.
-- Backend API contracts for screening submission, risk scoring, explanation retrieval, and audit logging.
-- Data quality checks for missingness, invalid values, inconsistent responses, duplicate records, and out-of-range inputs.
-- Privacy and security requirements for personally identifiable information, consent, access control, and data retention.
+- [ ] Data dictionary for screening responses, demographic context, functional indicators, referral metadata, and outcome labels.
+- [x] Synthetic or de-identified seed datasets for local development and UI testing.
+- [x] Initial risk stratification approach, starting with interpretable baseline models and rules before advanced machine learning.
+- [x] Model card template describing intended use, limitations, training data, fairness considerations, and evaluation results.
+- [x] Explainability layer that surfaces the main factors contributing to a risk result in plain language.
+- [x] Backend API contracts for screening submission, risk scoring, explanation retrieval, and audit logging.
+- [x] Data quality checks for missingness, invalid values, inconsistent responses, duplicate records, and out-of-range inputs.
+- [ ] Production privacy and security requirements for personally identifiable information, consent, access control, and data retention.
 
 ### Exit Criteria
 
@@ -79,14 +81,15 @@ Deliver a working MVP application that demonstrates the core screening, explaina
 
 ### Deliverables
 
-- Next.js frontend for screening intake, risk result review, explanation display, referral guidance, and basic dashboards.
-- FastAPI backend for health checks, screening APIs, scoring orchestration, configuration, and audit logging.
-- Local development setup using Docker Compose for frontend and backend services.
-- Role-aware interface patterns for frontline users and administrators.
-- MVP dashboard showing screening volume, risk distribution, referral status, follow-up status, and data completeness.
-- Environment templates for local configuration without committing secrets.
-- Automated smoke tests for backend health, scoring endpoints, and frontend build integrity.
-- Clear README setup instructions for developers and pilot collaborators.
+- [x] Next.js frontend for screening intake, risk result review, explanation display, referral guidance, and basic dashboards.
+- [x] FastAPI backend for health checks, screening APIs, scoring orchestration, configuration, and audit logging.
+- [x] Local development setup using Docker Compose for frontend and backend services.
+- [x] Role-aware interface patterns for frontline users and administrators.
+- [x] MVP dashboard showing screening volume, risk distribution, referral status, follow-up status, and data completeness.
+- [x] Environment templates for local configuration without committing secrets.
+- [x] Automated smoke tests for backend health, scoring endpoints, and frontend build integrity.
+- [x] Clear README setup instructions for developers and pilot collaborators.
+- [x] Draft report export action with non-diagnostic report status and audit trail.
 
 ### Exit Criteria
 
@@ -103,14 +106,14 @@ Evaluate whether MindMap Care is clinically sensible, explainable, fair, and tru
 
 ### Deliverables
 
-- Validation plan covering clinical review, model performance, workflow usability, fairness, and implementation feasibility.
-- Test datasets or retrospective datasets approved for evaluation where available.
-- Metrics for sensitivity, specificity, positive predictive value, negative predictive value, calibration, missingness robustness, and subgroup performance.
-- Explainability review protocol for clinicians and frontline users.
-- Bias and fairness review across age, gender, language, geography, facility type, and other locally relevant variables.
-- Safety review of crisis escalation pathways and high-risk outputs.
-- Documentation of known failure modes, edge cases, and recommended mitigations.
-- Trust artifacts, including model cards, validation summaries, release notes, and risk management documentation.
+- [x] Validation plan covering clinical review, model performance, workflow usability, fairness, and implementation feasibility.
+- [ ] Test datasets or retrospective datasets approved for evaluation where available.
+- [x] Metrics for sensitivity, specificity, positive predictive value, negative predictive value, calibration, missingness robustness, and subgroup performance.
+- [x] Explainability review protocol for clinicians and frontline users.
+- [x] Bias and fairness review across age, gender, language, geography, facility type, and other locally relevant variables.
+- [x] Safety review of crisis escalation pathways and high-risk outputs.
+- [x] Documentation of known failure modes, edge cases, and recommended mitigations.
+- [ ] Complete trust artifact pack including validation summaries, release notes, and formal risk management documentation.
 
 ### Exit Criteria
 
@@ -127,14 +130,14 @@ Prepare the product, operations, documentation, and governance needed for a smal
 
 ### Deliverables
 
-- Pilot protocol describing site selection, users, inclusion criteria, workflow, success metrics, and support model.
-- Deployment plan for a selected pilot environment, including hosting, access control, data protection, backups, and monitoring.
-- Training materials for frontline users, supervisors, and clinical reviewers.
-- Standard operating procedures for screening, referral, escalation, downtime, data correction, and incident reporting.
-- Consent, privacy, and governance documentation aligned with local institutional and regulatory requirements.
-- Monitoring dashboard for usage, errors, referral completion, high-risk cases, and follow-up gaps.
-- Feedback collection plan for users, patients, clinicians, and program leaders.
-- Go/no-go checklist for pilot launch.
+- [ ] Pilot protocol describing site selection, users, inclusion criteria, workflow, success metrics, and support model.
+- [ ] Deployment plan for a selected pilot environment, including hosting, access control, data protection, backups, and monitoring.
+- [ ] Training materials for frontline users, supervisors, and clinical reviewers.
+- [ ] Standard operating procedures for screening, referral, escalation, downtime, data correction, and incident reporting.
+- [ ] Consent, privacy, and governance documentation aligned with local institutional and regulatory requirements.
+- [ ] Monitoring dashboard for usage, errors, referral completion, high-risk cases, and follow-up gaps.
+- [ ] Feedback collection plan for users, patients, clinicians, and program leaders.
+- [ ] Go/no-go checklist for pilot launch.
 
 ### Exit Criteria
 
@@ -151,13 +154,13 @@ Convert validated pilot learning into a sustainable product, partnership, and bu
 
 ### Deliverables
 
-- Commercial positioning for health systems, NGOs, research institutions, employers, universities, insurers, and public sector programs.
-- Pricing and packaging hypotheses, such as hosted SaaS, institutional licensing, implementation support, analytics modules, or grant-funded deployments.
-- Evidence package summarizing pilot outcomes, clinical value, operational value, usability, safety, and implementation lessons.
-- Product requirements for scale, including multi-site management, localization, advanced analytics, integrations, and enterprise security.
-- Partnership plan for ministries of health, county governments, hospitals, universities, NGOs, and digital health implementers.
-- Regulatory and compliance pathway for target countries and deployment contexts.
-- Sustainability plan covering support, maintenance, data stewardship, model monitoring, and continuous validation.
+- [ ] Commercial positioning for health systems, NGOs, research institutions, employers, universities, insurers, and public sector programs.
+- [ ] Pricing and packaging hypotheses, such as hosted SaaS, institutional licensing, implementation support, analytics modules, or grant-funded deployments.
+- [ ] Evidence package summarizing pilot outcomes, clinical value, operational value, usability, safety, and implementation lessons.
+- [ ] Product requirements for scale, including multi-site management, localization, advanced analytics, integrations, and enterprise security.
+- [ ] Partnership plan for ministries of health, county governments, hospitals, universities, NGOs, and digital health implementers.
+- [ ] Regulatory and compliance pathway for target countries and deployment contexts.
+- [ ] Sustainability plan covering support, maintenance, data stewardship, model monitoring, and continuous validation.
 
 ### Exit Criteria
 

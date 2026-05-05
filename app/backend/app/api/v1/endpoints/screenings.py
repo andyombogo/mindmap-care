@@ -3,6 +3,8 @@ from fastapi import APIRouter, HTTPException, status
 from app.schemas.screening import (
     AuditEventResponse,
     PatientRiskSummaryResponse,
+    ReportExportRequest,
+    ReportExportResponse,
     ScreeningReviewRequest,
     ScreeningReviewResponse,
     ScreeningSubmission,
@@ -14,6 +16,7 @@ from app.services.demo_store import (
     get_risk_summary,
     get_triage_queue,
     list_audit_events,
+    record_report_export,
     record_summary_view,
     save_screening_review,
     submit_screening_for_mock_inference,
@@ -70,6 +73,18 @@ def review_screening(
 ) -> ScreeningReviewResponse:
     """Save a clinician review or override decision for one screening record."""
     response = save_screening_review(screening_id, payload)
+    if response is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Risk summary not found.")
+    return response
+
+
+@router.post("/{screening_id}/report-export", response_model=ReportExportResponse)
+def export_screening_report(
+    screening_id: str,
+    payload: ReportExportRequest,
+) -> ReportExportResponse:
+    """Record a draft report export event for one screening record."""
+    response = record_report_export(screening_id, payload)
     if response is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Risk summary not found.")
     return response

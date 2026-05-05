@@ -1,4 +1,6 @@
 import type {
+  ApiReportExportRequest,
+  ApiReportExportResponse,
   ApiScreeningReviewRequest,
   ApiScreeningReviewResponse,
   ApiDashboardSummary,
@@ -102,6 +104,16 @@ export function saveScreeningReview(
   payload: ApiScreeningReviewRequest
 ) {
   return fetchJson<ApiScreeningReviewResponse>(`/api/v1/screenings/${screeningId}/review`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function exportRiskReport(
+  screeningId: string,
+  payload: ApiReportExportRequest
+) {
+  return fetchJson<ApiReportExportResponse>(`/api/v1/screenings/${screeningId}/report-export`, {
     method: "POST",
     body: JSON.stringify(payload)
   });

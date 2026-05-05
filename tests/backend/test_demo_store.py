@@ -3,13 +3,14 @@ from app.services.demo_store import (
     get_latest_risk_summary,
     get_triage_queue,
     list_audit_events,
+    record_report_export,
     record_summary_view,
     reset_demo_store,
     save_screening_review,
     seed_demo_store_from_synthetic,
     submit_screening_for_mock_inference,
 )
-from app.schemas.screening import ScreeningReviewRequest, ScreeningSubmission
+from app.schemas.screening import ReportExportRequest, ScreeningReviewRequest, ScreeningSubmission
 
 
 def test_demo_store_returns_mock_risk_summary_for_submission():
@@ -194,3 +195,40 @@ def test_demo_store_review_updates_summary_and_audit_trail():
     assert review_response.summary.assigned_to == "Same-day referral desk"
     assert review_response.summary.last_reviewed_by == "Dr. Achieng"
     assert review_response.audit_event.event_type == "override_recorded"
+
+
+def test_demo_store_report_export_updates_status_and_audit_trail():
+    reset_demo_store()
+    submission = ScreeningSubmission(
+        patient_reference_id="MC-502",
+        site_id="clinic-001",
+        screener_role="clinician",
+        consent_confirmed=True,
+        responses=[
+            {
+                "code": "mh-mood",
+                "label": "Low mood",
+                "domain": "mental_health",
+                "value": 2,
+            }
+        ],
+    )
+
+    response = submit_screening_for_mock_inference(submission)
+    export_response = record_report_export(
+        response.screening_id,
+        ReportExportRequest(
+            actor="Dr. Achieng",
+            export_format="pdf",
+            note="Prepared for supervised referral review.",
+        ),
+    )
+    events = list_audit_events(response.screening_id)
+
+    assert export_response is not None
+    assert export_response.report_status == "Draft report exported for PDF"
+    assert export_response.summary.report_status == "Draft report exported for PDF"
+    assert export_response.audit_event.event_type == "report_exported"
+    assert export_response.audit_event.actor == "Dr. Achieng"
+    assert events is not None
+    assert events[0].event_type == "report_exported"

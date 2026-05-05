@@ -6,6 +6,7 @@ import { RiskBadge } from "@/components/RiskBadge";
 import { WorkflowEmptyState } from "@/components/WorkflowEmptyState";
 import {
   ApiRequestError,
+  exportRiskReport,
   formatApiError,
   getLatestRiskSummary,
   getRiskSummary,
@@ -40,6 +41,8 @@ function PatientRiskSummaryContent() {
   const [reviewNote, setReviewNote] = useState("");
   const [reviewDraftMessage, setReviewDraftMessage] = useState("");
   const [isSavingReview, setIsSavingReview] = useState(false);
+  const [reportExportMessage, setReportExportMessage] = useState("");
+  const [isExportingReport, setIsExportingReport] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -160,6 +163,32 @@ function PatientRiskSummaryContent() {
     }
   }
 
+  async function exportReport() {
+    const currentPatient = patient;
+    if (!currentPatient) {
+      return;
+    }
+    if (loadState !== "ready") {
+      setReportExportMessage("Draft report export prepared for this session.");
+      return;
+    }
+
+    setIsExportingReport(true);
+    try {
+      const response = await exportRiskReport(currentPatient.audit.screeningId, {
+        actor: reviewOwner || currentPatient.assignedTo || "Clinical review queue",
+        export_format: "pdf",
+        note: "Frontend draft report export requested from the risk summary page.",
+      });
+      setPatient(mapApiSummaryToPatient(response.summary));
+      setReportExportMessage(response.audit_event.detail);
+    } catch (error) {
+      setReportExportMessage(`Could not record report export: ${formatApiError(error)}`);
+    } finally {
+      setIsExportingReport(false);
+    }
+  }
+
   return (
     <main className="page-stack">
       <div className={`integration-banner ${loadState}`}>
@@ -185,12 +214,24 @@ function PatientRiskSummaryContent() {
         </div>
 
         <div className="risk-header-actions">
-          <button className="button secondary" type="button">
-            Export report
+          <button
+            className="button secondary"
+            disabled={isExportingReport}
+            onClick={() => void exportReport()}
+            type="button"
+          >
+            {isExportingReport ? "Exporting..." : "Export report"}
           </button>
           <RiskBadge level={patient.riskLevel} />
         </div>
       </header>
+
+      {reportExportMessage ? (
+        <div className="integration-banner ready" role="status">
+          <strong>Report export</strong>
+          <span>{reportExportMessage}</span>
+        </div>
+      ) : null}
 
       <section className="content-grid three-column">
         <article className="panel risk-score-panel">

@@ -252,3 +252,17 @@ export type ApiScreeningReviewResponse = {
   audit_event: ApiAuditEvent;
   summary: ApiPatientRiskSummary;
 };
+
+export type ApiReportExportRequest = {
+  actor: string;
+  export_format: "print" | "pdf" | "html";
+  note?: string;
+};
+
+export type ApiReportExportResponse = {
+  screening_id: string;
+  report_status: string;
+  exported_at: string;
+  audit_event: ApiAuditEvent;
+  summary: ApiPatientRiskSummary;
+};

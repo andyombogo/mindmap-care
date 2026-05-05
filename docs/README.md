@@ -9,6 +9,7 @@ This folder contains the shared product, clinical, technical, model, pilot, and 
 - [Technical architecture](technical-architecture.md): frontend, backend, model interface, data, and deployment architecture
 - [Model card](model-card.md): current mock model position, intended use, limitations, and validation needs
 - [Mock scoring rules](mock-scoring-rules.md): plain-language scoring logic and deterministic fixture expectations
+- [Validation protocol](validation-protocol.md): clinical, workflow, safety, fairness, and implementation review plan
 - [Pilot strategy](pilot-strategy.md): pilot goals, operating model, readiness status, and evidence package
 - [Regulatory and ethics notes](regulatory-and-ethics-notes.md): safe-use, privacy, risk, and governance considerations
 
@@ -23,7 +24,6 @@ This folder contains the shared product, clinical, technical, model, pilot, and 
 ## Missing Documents to Add Later
 
 - security and privacy plan
-- validation protocol
 - data dictionary
 - API reference
 - deployment runbook
