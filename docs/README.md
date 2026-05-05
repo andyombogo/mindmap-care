@@ -7,6 +7,9 @@ This folder contains the shared product, clinical, technical, model, pilot, and 
 - [Product overview](product-overview.md): product purpose, users, value proposition, and MVP framing
 - [Clinical workflow](clinical-workflow.md): intended screening, review, triage, and follow-up workflow
 - [Technical architecture](technical-architecture.md): frontend, backend, model interface, data, and deployment architecture
+- [Risk register](risk-register.md): product, clinical, privacy, bias, safety, and implementation risks
+- [Offline and low-bandwidth assumptions](offline-low-bandwidth-assumptions.md): connectivity, shared-device, and future offline-sync boundaries
+- [Data dictionary](data-dictionary.md): MVP screening, risk summary, triage, audit, export, and dashboard fields
 - [Model card](model-card.md): current mock model position, intended use, limitations, and validation needs
 - [Mock scoring rules](mock-scoring-rules.md): plain-language scoring logic and deterministic fixture expectations
 - [Validation protocol](validation-protocol.md): clinical, workflow, safety, fairness, and implementation review plan
@@ -24,7 +27,6 @@ This folder contains the shared product, clinical, technical, model, pilot, and 
 ## Missing Documents to Add Later
 
 - security and privacy plan
-- data dictionary
 - API reference
 - deployment runbook
 - user training guide

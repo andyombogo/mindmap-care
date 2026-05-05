@@ -17,7 +17,7 @@ Define the clinical, operational, and ethical boundaries for MindMap Care before
 - [x] Prioritized problem statements for African health system contexts, including workforce constraints, referral bottlenecks, stigma, low specialist coverage, and variable data availability.
 - [x] Definition of intended use, clinical disclaimers, non-diagnostic positioning, and escalation boundaries.
 - [x] Initial list of target settings, such as primary care clinics, community outreach programs, hospitals, universities, NGOs, and county or ministry programs.
-- [ ] Formal risk register with owners, severity, mitigations, and review cadence covering clinical harm, bias, privacy, overreliance, false reassurance, data misuse, and implementation failure.
+- [x] Formal risk register with owners, severity, mitigations, and review cadence covering clinical harm, bias, privacy, overreliance, false reassurance, data misuse, and implementation failure.
 
 ### Exit Criteria
 
@@ -39,7 +39,7 @@ Design real-world screening and triage workflows that fit into African health de
 - [x] Triage categories and action pathways, such as low risk, monitor, refer, urgent referral, and crisis escalation.
 - [x] Draft screening journey for mental health, cognitive risk, and functional impairment use cases.
 - [x] Human-in-the-loop review points for clinician override, referral confirmation, and risk escalation.
-- [ ] Offline, low-bandwidth, and shared-device usage assumptions.
+- [x] Offline, low-bandwidth, and shared-device usage assumptions.
 - [x] Data capture requirements, including required fields, optional fields, consent status, language, location, referral outcome, and follow-up status.
 
 ### Exit Criteria
@@ -57,7 +57,7 @@ Build a transparent, auditable data and model foundation that can support explai
 
 ### Deliverables
 
-- [ ] Data dictionary for screening responses, demographic context, functional indicators, referral metadata, and outcome labels.
+- [x] Data dictionary for screening responses, demographic context, functional indicators, referral metadata, and outcome labels.
 - [x] Synthetic or de-identified seed datasets for local development and UI testing.
 - [x] Initial risk stratification approach, starting with interpretable baseline models and rules before advanced machine learning.
 - [x] Model card template describing intended use, limitations, training data, fairness considerations, and evaluation results.
