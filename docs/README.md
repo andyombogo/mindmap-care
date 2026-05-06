@@ -15,6 +15,8 @@ This folder contains the shared product, clinical, technical, model, pilot, and 
 - [Validation protocol](validation-protocol.md): clinical, workflow, safety, fairness, and implementation review plan
 - [Pilot strategy](pilot-strategy.md): pilot goals, operating model, readiness status, and evidence package
 - [Regulatory and ethics notes](regulatory-and-ethics-notes.md): safe-use, privacy, risk, and governance considerations
+- [Privacy and security requirements](privacy-and-security-requirements.md): pre-pilot and production requirements for data handling, consent, access, retention, auditability, and operations
+- [Trust artifact pack](trust-artifacts/README.md): current validation summary, release notes, and formal risk management process
 
 ## Documentation Principles
 
@@ -26,7 +28,6 @@ This folder contains the shared product, clinical, technical, model, pilot, and 
 
 ## Missing Documents to Add Later
 
-- security and privacy plan
 - API reference
 - deployment runbook
 - user training guide

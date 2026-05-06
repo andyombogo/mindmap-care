@@ -2,7 +2,7 @@
 
 MindMap Care is being developed as an explainable AI screening and triage platform for mental health, cognitive, and functional risk stratification in African health systems. This roadmap keeps the work practical: define the product clearly, design clinical workflows before overbuilding, validate model behavior, and move toward pilots only when safety, trust, and operational readiness are in place.
 
-Status key: `[x]` completed or documented in the repository as of 2026-05-05; `[ ]` not yet implemented or still only conceptual.
+Status key: `[x]` completed or documented in the repository as of 2026-05-06; `[ ]` not yet implemented or still only conceptual.
 
 ## Phase 0: Product Definition
 
@@ -64,7 +64,7 @@ Build a transparent, auditable data and model foundation that can support explai
 - [x] Explainability layer that surfaces the main factors contributing to a risk result in plain language.
 - [x] Backend API contracts for screening submission, risk scoring, explanation retrieval, and audit logging.
 - [x] Data quality checks for missingness, invalid values, inconsistent responses, duplicate records, and out-of-range inputs.
-- [ ] Production privacy and security requirements for personally identifiable information, consent, access control, and data retention.
+- [x] Production privacy and security requirements for personally identifiable information, consent, access control, and data retention.
 
 ### Exit Criteria
 
@@ -113,7 +113,7 @@ Evaluate whether MindMap Care is clinically sensible, explainable, fair, and tru
 - [x] Bias and fairness review across age, gender, language, geography, facility type, and other locally relevant variables.
 - [x] Safety review of crisis escalation pathways and high-risk outputs.
 - [x] Documentation of known failure modes, edge cases, and recommended mitigations.
-- [ ] Complete trust artifact pack including validation summaries, release notes, and formal risk management documentation.
+- [x] Complete trust artifact pack including validation summaries, release notes, and formal risk management documentation.
 
 ### Exit Criteria
 

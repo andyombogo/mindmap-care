@@ -41,8 +41,8 @@ MindMap Care is not diagnostic. Current scoring uses deterministic mock rules an
 | R-011 | Audit trail is incomplete or mutable during MVP demos | Medium | Technical owner | Current in-memory audit events support traceability demos only; persistent immutable audit logs remain required before pilot | Every release | Open |
 | R-012 | Connectivity failures interrupt screening or review workflows | Medium | Product lead | Document low-bandwidth assumptions, design graceful fallbacks, avoid claiming offline support until implemented | Workflow review | Open |
 | R-013 | Pilot partner assumes product is production-ready because demo is polished | High | Product lead | Keep MVP/prototype labels, readiness checklist, and not-ready-for-live-use section current | Before demos | Open |
-| R-014 | Data retention, consent, and governance expectations are unclear | High | Data protection owner | Add privacy requirements, consent workflow, data retention plan, and governance approvals before pilot | Before pilot | Open |
-| R-015 | Model or rule changes are not communicated to reviewers | Medium | Validation owner | Maintain model card, mock scoring rules, release notes, and validation summary templates | Every model/rule change | Open |
+| R-014 | Data retention, consent, and governance expectations are unclear | High | Data protection owner | Maintain privacy and security requirements, define consent workflow, approve retention plan, and confirm governance approvals before pilot | Before pilot | Open |
+| R-015 | Model or rule changes are not communicated to reviewers | Medium | Validation owner | Maintain model card, mock scoring rules, release notes, and validation summaries in the trust artifact pack | Every model/rule change | Open |
 
 ## Open Actions
 
@@ -50,3 +50,8 @@ MindMap Care is not diagnostic. Current scoring uses deterministic mock rules an
 - Convert high and critical risks into GitHub issues with acceptance criteria.
 - Add pause criteria for crisis-routing concerns, privacy incidents, and unsafe product interpretation.
 - Review this register after any clinician feedback session or partner walkthrough.
+
+## Supporting Artifacts
+
+- [Privacy and security requirements](privacy-and-security-requirements.md)
+- [Trust artifact pack](trust-artifacts/README.md)

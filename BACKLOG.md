@@ -19,7 +19,7 @@ Focus: make the MVP more credible, reliable, reviewable, and safe for stakeholde
 | Model | Document current mock scoring rules in plain language | Clinicians and technical reviewers can inspect how scores are produced |
 | Model | Add deterministic fixture tests for low, moderate, high, and urgent mock outputs | Mock inference remains stable as the API evolves |
 | Validation | Create a validation protocol outline | Partners can see how clinical review and later evidence generation will work |
-| Security | Add security and privacy notes to docs | Reviewers can assess current gaps and planned mitigations |
+| Security | Convert documented privacy and security requirements into implementation issues and pilot controls | Requirements move from documentation into shippable engineering and governance work |
 | Deployment | Confirm Docker Compose works on a clean machine | Local demo setup becomes more reliable for collaborators |
 | Pilot Support | Draft a one-page demo script for partner walkthroughs | Funders and pilot partners see a consistent story |
 | Analytics | Add data completeness indicators to dashboard summary | Programme users can see whether screening records are usable |

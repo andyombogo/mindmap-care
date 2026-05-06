@@ -46,6 +46,8 @@ Implemented MVP pieces:
 - Docker Compose local development setup
 - backend API tests and lightweight frontend test scaffold
 - product, workflow, architecture, ethics, validation, model, and pilot documentation
+- privacy and security requirements documentation
+- trust artifact pack with validation summary, release notes, and risk management plan
 
 Not yet implemented:
 
@@ -208,6 +210,8 @@ Key project documents:
 - [Validation protocol](docs/validation-protocol.md)
 - [Pilot strategy](docs/pilot-strategy.md)
 - [Regulatory and ethics notes](docs/regulatory-and-ethics-notes.md)
+- [Privacy and security requirements](docs/privacy-and-security-requirements.md)
+- [Trust artifact pack](docs/trust-artifacts/README.md)
 - [Roadmap](ROADMAP.md)
 
 ## Target Users
