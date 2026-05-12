@@ -88,6 +88,8 @@ Before pilot launch:
 - Pilot metrics are agreed
 - Data collection and retention plan is approved
 
+Detailed Phase 5 artifacts now live in the [pilot readiness framework](pilot-readiness-framework.md).
+
 ## MVP Pilot-Readiness Status
 
 The current repository is ready for internal walkthroughs and partner-facing workflow review, but not for live clinical use.
@@ -106,7 +108,7 @@ Not ready for live pilot use:
 - No persistent database or immutable audit trail
 - No validated clinical model or local performance evidence
 - No production data protection assessment
-- No incident reporting or deployment monitoring workflow
+- No implemented incident reporting workflow or deployment monitoring service
 
 Use this status section as a living checklist. Each item should be converted into a tracked issue before a real-world pilot.
 

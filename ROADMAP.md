@@ -2,7 +2,7 @@
 
 MindMap Care is being developed as an explainable AI screening and triage platform for mental health, cognitive, and functional risk stratification in African health systems. This roadmap keeps the work practical: define the product clearly, design clinical workflows before overbuilding, validate model behavior, and move toward pilots only when safety, trust, and operational readiness are in place.
 
-Status key: `[x]` completed or documented in the repository as of 2026-05-06; `[ ]` not yet implemented or still only conceptual.
+Status key: `[x]` completed or documented in the repository as of 2026-05-12; `[ ]` not yet implemented or still only conceptual.
 
 ## Phase 0: Product Definition
 
@@ -130,14 +130,14 @@ Prepare the product, operations, documentation, and governance needed for a smal
 
 ### Deliverables
 
-- [ ] Pilot protocol describing site selection, users, inclusion criteria, workflow, success metrics, and support model.
-- [ ] Deployment plan for a selected pilot environment, including hosting, access control, data protection, backups, and monitoring.
-- [ ] Training materials for frontline users, supervisors, and clinical reviewers.
-- [ ] Standard operating procedures for screening, referral, escalation, downtime, data correction, and incident reporting.
-- [ ] Consent, privacy, and governance documentation aligned with local institutional and regulatory requirements.
-- [ ] Monitoring dashboard for usage, errors, referral completion, high-risk cases, and follow-up gaps.
-- [ ] Feedback collection plan for users, patients, clinicians, and program leaders.
-- [ ] Go/no-go checklist for pilot launch.
+- [x] Pilot protocol describing site selection, users, inclusion criteria, workflow, success metrics, and support model.
+- [x] Deployment plan for a selected pilot environment, including hosting, access control, data protection, backups, and monitoring.
+- [x] Training materials for frontline users, supervisors, and clinical reviewers.
+- [x] Standard operating procedures for screening, referral, escalation, downtime, data correction, and incident reporting.
+- [x] Consent, privacy, and governance documentation aligned with local institutional and regulatory requirements.
+- [x] Monitoring dashboard specification for usage, errors, referral completion, high-risk cases, and follow-up gaps.
+- [x] Feedback collection plan for users, patients, clinicians, and program leaders.
+- [x] Go/no-go checklist for pilot launch.
 
 ### Exit Criteria
 

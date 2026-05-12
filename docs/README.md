@@ -14,6 +14,15 @@ This folder contains the shared product, clinical, technical, model, pilot, and 
 - [Mock scoring rules](mock-scoring-rules.md): plain-language scoring logic and deterministic fixture expectations
 - [Validation protocol](validation-protocol.md): clinical, workflow, safety, fairness, and implementation review plan
 - [Pilot strategy](pilot-strategy.md): pilot goals, operating model, readiness status, and evidence package
+- [Pilot readiness framework](pilot-readiness-framework.md): remaining work map, Phase 5 artifact index, decision gates, and live-pilot blockers
+- [Pilot protocol](pilot-protocol.md): site selection, pilot users, inclusion criteria, workflow, success metrics, oversight, and pause rules
+- [Pilot deployment plan](pilot-deployment-plan.md): pilot environment, access, data protection, backup, monitoring, release, and rollback plan
+- [Training guide](training-guide.md): role-specific onboarding for screeners, clinician reviewers, supervisors, programme leads, and support users
+- [Pilot SOPs](pilot-sops.md): screening, review, referral, escalation, correction, downtime, incident, export, and weekly review procedures
+- [Consent and governance pack](consent-and-governance.md): consent, retention, access, governance roles, approvals, and local decisions
+- [Monitoring dashboard specification](monitoring-dashboard-spec.md): pilot usage, safety, referral, data quality, operations, and alert indicators
+- [Feedback collection plan](feedback-collection-plan.md): feedback groups, methods, fields, triage rules, and closeout questions
+- [Pilot go/no-go checklist](pilot-go-no-go-checklist.md): launch gate, no-go conditions, and sign-off record
 - [Regulatory and ethics notes](regulatory-and-ethics-notes.md): safe-use, privacy, risk, and governance considerations
 - [Privacy and security requirements](privacy-and-security-requirements.md): pre-pilot and production requirements for data handling, consent, access, retention, auditability, and operations
 - [Trust artifact pack](trust-artifacts/README.md): current validation summary, release notes, and formal risk management process
@@ -29,6 +38,4 @@ This folder contains the shared product, clinical, technical, model, pilot, and 
 ## Missing Documents to Add Later
 
 - API reference
-- deployment runbook
-- user training guide
 - incident response process

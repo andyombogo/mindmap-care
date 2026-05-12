@@ -6,10 +6,12 @@ This backlog translates the roadmap into practical work items for moving from MV
 
 Focus: make the MVP more credible, reliable, reviewable, and safe for stakeholder walkthroughs.
 
+Current framework: [Pilot readiness framework](docs/pilot-readiness-framework.md)
+
 | Category | Item | Outcome |
 | --- | --- | --- |
-| Product | Define the first pilot workflow in one concise journey map | Reviewers can understand the screening, triage, referral, and follow-up path without ambiguity |
-| Product | Draft role definitions for screener, clinician reviewer, supervisor, and programme lead | UI and permissions can be designed around real users |
+| Product | Convert the pilot-readiness framework into tracked GitHub issues | Critical pilot blockers have owners, acceptance criteria, and review cadence |
+| Product | Review the pilot protocol with one candidate site or clinical advisor | Site-specific workflow, inclusion criteria, and escalation assumptions are validated |
 | Frontend | Add review/override placeholders to the risk summary page | Clinicians can see where judgment and accountability enter the workflow |
 | Frontend | Add clearer empty states for dashboard, queue, and risk summary pages | Demo and local use remain understandable when no records exist |
 | Frontend | Run and stabilize `npm run typecheck` and component tests once Node/npm are available | Frontend quality gates are real, not aspirational |
@@ -21,7 +23,7 @@ Focus: make the MVP more credible, reliable, reviewable, and safe for stakeholde
 | Validation | Create a validation protocol outline | Partners can see how clinical review and later evidence generation will work |
 | Security | Convert documented privacy and security requirements into implementation issues and pilot controls | Requirements move from documentation into shippable engineering and governance work |
 | Deployment | Confirm Docker Compose works on a clean machine | Local demo setup becomes more reliable for collaborators |
-| Pilot Support | Draft a one-page demo script for partner walkthroughs | Funders and pilot partners see a consistent story |
+| Pilot Support | Turn the pilot protocol and go/no-go checklist into a one-page partner walkthrough script | Funders and pilot partners see a consistent story |
 | Analytics | Add data completeness indicators to dashboard summary | Programme users can see whether screening records are usable |
 | Integrations | Create an integration assumptions note for EMR, DHIS2, and referral systems | Future partner conversations have a concrete starting point |
 
@@ -46,7 +48,7 @@ Focus: move from demo-ready to controlled pilot-ready with governance, persisten
 | Security | Prepare data protection impact assessment materials | Pilot partners can review privacy and governance posture |
 | Security | Add secrets management guidance and production configuration checklist | Deployment practices become less fragile |
 | Deployment | Create staging deployment plan with backups, logs, and rollback steps | Pilot environment can be operated responsibly |
-| Pilot Support | Draft training guide and quick reference sheet | Frontline users can be onboarded consistently |
+| Pilot Support | Convert the training guide into role-specific quick reference sheets | Frontline users can be onboarded consistently |
 | Analytics | Track referral completion, follow-up status, missingness, and override rates | Pilot evaluation can measure operational value |
 | Integrations | Prototype import/export contract for referrals or screening records | Partner systems can exchange minimum useful data |
 

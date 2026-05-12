@@ -9,6 +9,7 @@ The pack is intentionally lightweight for the prototype stage, but it should gro
 ## Contents
 
 - [Validation summary 2026-05-06](validation-summary-2026-05-06.md): current evidence snapshot, limitations, and next validation actions
+- [Release notes 2026-05-12](release-notes-2026-05-12.md): pilot-readiness framework and Phase 5 documentation milestone
 - [Release notes 2026-05-06](release-notes-2026-05-06.md): what changed in the repository and what reviewers should know
 - [Risk management plan](risk-management-plan.md): formal process for identifying, reviewing, escalating, and mitigating product risk
 

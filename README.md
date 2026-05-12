@@ -48,6 +48,7 @@ Implemented MVP pieces:
 - product, workflow, architecture, ethics, validation, model, and pilot documentation
 - privacy and security requirements documentation
 - trust artifact pack with validation summary, release notes, and risk management plan
+- pilot-readiness framework, protocol, deployment plan, training guide, SOPs, governance pack, monitoring specification, feedback plan, and go/no-go checklist
 
 Not yet implemented:
 
@@ -209,6 +210,15 @@ Key project documents:
 - [Mock scoring rules](docs/mock-scoring-rules.md)
 - [Validation protocol](docs/validation-protocol.md)
 - [Pilot strategy](docs/pilot-strategy.md)
+- [Pilot readiness framework](docs/pilot-readiness-framework.md)
+- [Pilot protocol](docs/pilot-protocol.md)
+- [Pilot deployment plan](docs/pilot-deployment-plan.md)
+- [Training guide](docs/training-guide.md)
+- [Pilot SOPs](docs/pilot-sops.md)
+- [Consent and governance pack](docs/consent-and-governance.md)
+- [Monitoring dashboard specification](docs/monitoring-dashboard-spec.md)
+- [Feedback collection plan](docs/feedback-collection-plan.md)
+- [Pilot go/no-go checklist](docs/pilot-go-no-go-checklist.md)
 - [Regulatory and ethics notes](docs/regulatory-and-ethics-notes.md)
 - [Privacy and security requirements](docs/privacy-and-security-requirements.md)
 - [Trust artifact pack](docs/trust-artifacts/README.md)
@@ -237,13 +247,15 @@ Secondary users:
 
 Before any real pilot or clinical use, the project needs:
 
-- intended-use review by clinical and public health stakeholders
+- approved evaluation dataset pathway where available
+- intended-use review by clinical and public health stakeholders at the selected site
 - local workflow validation with frontline staff
 - review of explanation clarity and risk communication
 - retrospective validation on appropriate labelled data where available
 - subgroup performance review by age, sex, geography, language, and care setting
 - calibration review for risk categories
 - data protection and governance review
+- authentication, role-based access control, persistent storage, immutable audit logs, deployment monitoring, backups, and incident response ownership
 - prospective pilot evaluation with incident reporting and human oversight
 
 ## Contribution
